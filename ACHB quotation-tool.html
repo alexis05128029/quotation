@@ -480,7 +480,7 @@ html,body{height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;fon
       <div class="lp-row">
         <div class="lp-field">
           <span class="lp-label">Salesman</span>
-          <input class="lp-input" id="fSalesman" value="Alex Liu" oninput="syncField('fSalesman','prev_salesman')">
+          <select class="lp-select" id="fSalesman" onchange="onSalesmanChange()"></select>
         </div>
         <div class="lp-field">
           <span class="lp-label">Shipment Term</span>
@@ -712,6 +712,14 @@ var remarks=[
 var HIST_KEY='achb_history_v3';
 var SEQ_KEY='achb_quot_seq';
 
+var SALESPEOPLE=[
+  {name:'Alex Liu',    id:'1'},
+  {name:'Annie Liang', id:'4'},
+  {name:'Eddie Chou',  id:'3'},
+  {name:'Frankie Tsai',id:'0'},
+  {name:'Sarah Lee',   id:'2'}
+];
+
 // ============================================================
 // CUSTOMER LIST
 // ============================================================
@@ -762,6 +770,26 @@ function buildCustomerSelect(){
   });
 }
 
+function buildSalesmanSelect(){
+  var sel=document.getElementById('fSalesman');
+  SALESPEOPLE.forEach(function(s){
+    var o=document.createElement('option');
+    o.value=s.name;
+    o.textContent=s.name;
+    sel.appendChild(o);
+  });
+}
+
+function onSalesmanChange(){
+  var sel=document.getElementById('fSalesman');
+  var sp=SALESPEOPLE.find(function(s){return s.name===sel.value;});
+  if(!sp)return;
+  var quotNo=genQuotNo(sp.id);
+  document.getElementById('fQuotNo').value=quotNo;
+  document.getElementById('prev_quotNo').textContent=quotNo;
+  syncField('fSalesman','prev_salesman');
+}
+
 function onCustomerChange(){
   var sel=document.getElementById('fCustomer');
   var name=sel.value;
@@ -775,21 +803,28 @@ function onCustomerChange(){
 // ============================================================
 // INIT
 // ============================================================
+function genQuotNo(salesmanId){
+  var d=new Date(), p=function(n){return String(n).padStart(2,'0');};
+  var compact=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate());
+  var key=SEQ_KEY+'_'+salesmanId;
+  var stored=localStorage.getItem(key);
+  var seq=1;
+  if(stored){var pts=stored.split('|');if(pts[0]===compact)seq=parseInt(pts[1],10)+1;}
+  localStorage.setItem(key,compact+'|'+seq);
+  return compact+salesmanId+String(seq).padStart(2,'0');
+}
+
 (function init(){
   var d=new Date(), p=function(n){return String(n).padStart(2,'0');};
   var slash=d.getFullYear()+'/'+p(d.getMonth()+1)+'/'+p(d.getDate());
-  var compact=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate());
 
   // Dates in preview
   document.getElementById('prev_docDate').textContent=slash;
   document.getElementById('fDocDate').value=slash;
 
-  // QuotNo sequence
-  var stored=localStorage.getItem(SEQ_KEY);
-  var seq=1;
-  if(stored){var pts=stored.split('|');if(pts[0]===compact)seq=parseInt(pts[1],10)+1;}
-  localStorage.setItem(SEQ_KEY,compact+'|'+seq);
-  var quotNo=compact+'1'+String(seq).padStart(2,'0');
+  // Build salesman dropdown (default: Alex Liu)
+  buildSalesmanSelect();
+  var quotNo=genQuotNo(SALESPEOPLE[0].id);
   document.getElementById('fQuotNo').value=quotNo;
   document.getElementById('prev_quotNo').textContent=quotNo;
 
