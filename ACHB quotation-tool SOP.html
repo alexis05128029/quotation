@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>ACHB Quotation Tool V2.1 — 使用 SOP</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;background:#f0f4f7;color:#222;}
+.page{max-width:900px;margin:40px auto 60px;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.1);overflow:hidden;}
+
+/* Header */
+.page-hdr{background:#2C3A47;color:#fff;padding:28px 36px;display:flex;align-items:center;gap:20px;}
+.hdr-text h1{font-size:17pt;font-weight:700;letter-spacing:.5px;}
+.hdr-text p{font-size:9.5pt;color:#7AAFC8;margin-top:4px;}
+
+/* TOC */
+.toc{background:#f8fbfd;border-bottom:1px solid #e5edf2;padding:20px 36px;}
+.toc-title{font-size:8.5pt;font-weight:700;color:#7AAFC8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.toc-list{list-style:none;display:flex;flex-wrap:wrap;gap:6px 20px;}
+.toc-list a{font-size:9.5pt;color:#2C3A47;text-decoration:none;display:flex;align-items:center;gap:5px;}
+.toc-list a:hover{color:#3BC9D9;}
+.toc-num{background:#3BC9D9;color:#fff;border-radius:50%;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;font-size:7.5pt;font-weight:700;flex-shrink:0;}
+
+/* Body */
+.body{padding:36px 36px 40px;}
+.section{margin-bottom:40px;}
+.section-hdr{
+  display:flex;align-items:center;gap:12px;
+  border-bottom:2px solid #3BC9D9;padding-bottom:8px;margin-bottom:18px;
+}
+.section-num{
+  background:#2C3A47;color:#3BC9D9;
+  font-size:10pt;font-weight:700;
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.section-hdr h2{font-size:13pt;font-weight:700;color:#2C3A47;}
+
+/* Steps */
+.step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-dot{
+  flex-shrink:0;width:22px;height:22px;border-radius:50%;
+  background:#3BC9D9;color:#fff;font-size:8.5pt;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.step-body{flex:1;line-height:1.7;font-size:10pt;}
+.step-body strong{color:#2C3A47;}
+
+/* Note box */
+.note{background:#e5f7fc;border-left:4px solid #3BC9D9;border-radius:0 5px 5px 0;padding:10px 14px;margin:12px 0;font-size:9.5pt;line-height:1.6;color:#1a5060;}
+.warn{background:#fef6ec;border-left:4px solid #e67e22;border-radius:0 5px 5px 0;padding:10px 14px;margin:12px 0;font-size:9.5pt;line-height:1.6;color:#7a3a00;}
+
+/* Table */
+.info-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin:10px 0;}
+.info-tbl th{background:#2C3A47;color:#fff;padding:8px 12px;text-align:left;font-weight:700;}
+.info-tbl td{padding:7px 12px;border-bottom:1px solid #e5edf2;vertical-align:top;line-height:1.6;}
+.info-tbl tr:last-child td{border-bottom:none;}
+.info-tbl tr:nth-child(even) td{background:#f8fbfd;}
+
+/* Code-like */
+code{background:#f0f4f7;padding:1px 6px;border-radius:3px;font-size:9pt;font-family:Consolas,monospace;color:#c0550a;}
+
+/* Filename example */
+.fn-box{background:#2C3A47;color:#3BC9D9;padding:10px 16px;border-radius:5px;font-family:Consolas,monospace;font-size:10pt;margin:10px 0;letter-spacing:.3px;}
+
+hr.divider{border:none;border-top:1px solid #e5edf2;margin:32px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-hdr">
+    <svg width="44" height="52" viewBox="0 0 167 195" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <path d="M43.5757 64.5779H10.5328L0 87.7135H33.5846L43.5757 64.5779Z" fill="#3BC9D9"/>
+      <path d="M33.5461 87.7134L9.63165 142.415H46.6068L59.6073 111.166H112.853L125.412 142.415H167.002L105.811 0H71.7049L43.5773 64.5778H78.165L86.8922 43.4213L104.046 87.7134H33.5461Z" fill="#3BC9D9"/>
+      <path d="M30.4147 194.189L29.2511 190.527H20.0424L18.8788 194.189H9.89081L20.0023 168.104H29.5119L39.4027 194.189H30.4147ZM24.717 175.526L21.848 184.729H27.5257L24.717 175.526Z" fill="#3BC9D9"/>
+      <path d="M78.6649 190.567C77.1001 192.348 73.7095 195 67.8312 195C64.4607 195 61.4714 194.189 58.8833 192.012C54.4696 188.35 54.1285 183.145 54.1285 181.305C54.1285 179.722 54.3292 176.1 56.8771 172.577C60.5084 167.511 65.5641 167.154 67.8914 167.154C73.9101 167.154 77.5013 170.261 78.9659 171.924C79.7483 172.815 80.1295 173.428 80.6913 174.437L73.6894 177.861C73.5691 177.604 73.4286 177.347 73.3283 177.089C72.8669 176.199 71.5628 173.507 68.1923 173.547C66.6475 173.547 65.6845 174.101 65.1629 174.477C62.5347 176.397 62.6551 180.157 62.6551 180.83C62.6551 184.412 63.8187 186.332 65.0826 187.321C66.4068 188.331 67.5905 188.35 68.2325 188.35C71.1215 188.35 72.4656 186.431 72.9873 185.54C73.1678 185.164 73.3283 184.847 73.5891 184.076L80.7514 187.46C79.8085 189.162 79.327 189.835 78.685 190.567H78.6649Z" fill="#3BC9D9"/>
+      <path d="M114.155 194.189V184.135H106.171V194.189H97.8246V168.104H106.171V177.604H114.155V168.104H122.582V194.189H114.155Z" fill="#3BC9D9"/>
+    </svg>
+    <div class="hdr-text">
+      <h1>ACHB Quotation Tool V2.1 — 使用 SOP</h1>
+      <p>標準作業程序 &nbsp;｜&nbsp; 最後更新：2026-05-25</p>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">目錄</div>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-num">1</span>開啟工具</a></li>
+      <li><a href="#s2"><span class="toc-num">2</span>填寫文件資訊</a></li>
+      <li><a href="#s3"><span class="toc-num">3</span>填寫客戶資訊</a></li>
+      <li><a href="#s4"><span class="toc-num">4</span>新增品項</a></li>
+      <li><a href="#s5"><span class="toc-num">5</span>PDF 匯入品項</a></li>
+      <li><a href="#s6"><span class="toc-num">6</span>條款設定</a></li>
+      <li><a href="#s7"><span class="toc-num">7</span>儲存草稿</a></li>
+      <li><a href="#s8"><span class="toc-num">8</span>列印 / 匯出 PDF</a></li>
+      <li><a href="#s9"><span class="toc-num">9</span>History 紀錄</a></li>
+      <li><a href="#s10"><span class="toc-num">10</span>檔名規則</a></li>
+    </ul>
+  </div>
+
+  <div class="body">
+
+    <!-- 1 -->
+    <div class="section" id="s1">
+      <div class="section-hdr">
+        <div class="section-num">1</div>
+        <h2>開啟工具</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">用瀏覽器（Chrome / Edge 建議）開啟 <strong>ACHB quotation-tool V2.1.html</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">工具為純前端離線運作，無需網路連線（PDF 匯入功能需要網路載入 PDF.js）</div>
+      </div>
+      <div class="note">工具資料（History、報價單號序列）儲存於瀏覽器 localStorage。換瀏覽器或清除瀏覽器資料會導致紀錄消失，請定期用「💾 儲存」備份 JSON 草稿。</div>
+    </div>
+
+    <!-- 2 -->
+    <div class="section" id="s2">
+      <div class="section-hdr">
+        <div class="section-num">2</div>
+        <h2>填寫文件資訊</h2>
+      </div>
+      <table class="info-tbl">
+        <thead><tr><th>欄位</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Quotation No.</strong></td><td>選擇業務人員後自動產生，格式：<code>YYYYMMDD{ID}{序號}</code>（可手動修改）</td></tr>
+          <tr><td><strong>Doc Date</strong></td><td>自動帶入今天日期，唯讀</td></tr>
+          <tr><td><strong>Currency</strong></td><td>USD / EUR / TWD / JPY / GBP，預設 USD</td></tr>
+          <tr><td><strong>Payment Term</strong></td><td>下拉選單選擇付款條件</td></tr>
+          <tr><td><strong>Salesman</strong></td><td>選擇後自動產生報價單號並同步至預覽</td></tr>
+          <tr><td><strong>Shipment Term</strong></td><td>下拉選單選擇出貨條件</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3 -->
+    <div class="section" id="s3">
+      <div class="section-hdr">
+        <div class="section-num">3</div>
+        <h2>填寫客戶資訊</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">在 <strong>Customer Name</strong> 下拉選單中選擇客戶，選取後客戶代碼自動顯示在旁邊藍色標籤</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">填入 <strong>Contact Person</strong>（聯絡人）和 <strong>Tel.</strong>（電話）</div>
+      </div>
+      <div class="note">客戶選單目前內建 34 家。如需新增客戶，請通知工具管理員更新 <code>CUSTOMERS</code> 陣列。</div>
+    </div>
+
+    <!-- 4 -->
+    <div class="section" id="s4">
+      <div class="section-hdr">
+        <div class="section-num">4</div>
+        <h2>新增品項</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">點擊左側下方「<strong>＋ 新增品項</strong>」按鈕，在清單底部新增一筆空白品項</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">填寫每個品項的四個欄位：
+          <ul style="padding-left:16px;margin-top:4px;line-height:2;">
+            <li><strong>Part No.</strong>：料號</li>
+            <li><strong>Description</strong>：產品名稱與版本（末尾加 <code>REV.X</code>，會自動帶入檔名）</li>
+            <li><strong>Material / Spec</strong>：材質規格</li>
+            <li><strong>Lead Time</strong>：交期，ex: <code>10-14 WEEKS</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">每個品項下方的數量表格可填入多組 <strong>Qty × Unit Price</strong>，Amount 自動計算。點「<strong>＋ Add Qty Row</strong>」新增數量列，點「×」刪除</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">如需新增內容相似的品項，點擊品項右上角「<strong>⧉ 複製</strong>」按鈕，會在下方插入完整副本，再修改差異欄位即可</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">不需要的品項點「<strong>✕ 刪除</strong>」，確認後移除（至少保留一筆）</div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="section" id="s5">
+      <div class="section-hdr">
+        <div class="section-num">5</div>
+        <h2>PDF 匯入品項</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">點擊工具列「<strong>📥 匯入 PDF</strong>」，選擇客戶詢價 PDF 檔案</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">工具自動解析 PDF 文字，左側顯示原始文字，右側顯示偵測到的品項（Part No. / Description / Qty）</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">在右側表格中確認或修改品項資訊，點「<strong>＋ 手動新增列</strong>」補充未偵測到的品項</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">確認無誤後點「<strong>匯入 →</strong>」，品項會附加到現有品項下方</div>
+      </div>
+      <div class="warn">PDF 解析為自動辨識，精準度視 PDF 格式而定，匯入後請務必逐筆核對 Part No. 與數量。</div>
+    </div>
+
+    <!-- 6 -->
+    <div class="section" id="s6">
+      <div class="section-hdr">
+        <div class="section-num">6</div>
+        <h2>條款設定（Terms &amp; Conditions）</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">左側面板最下方為條款區，預設已內建 5 條標準條款</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">直接點擊文字框修改內容，修改即時同步到 A4 預覽</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">點「<strong>＋ 新增條款</strong>」增加條款，點「<strong>✕</strong>」刪除單一條款</div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="section" id="s7">
+      <div class="section-hdr">
+        <div class="section-num">7</div>
+        <h2>儲存草稿</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">點擊工具列「<strong>💾 儲存</strong>」，瀏覽器下載一份 <code>.json</code> 草稿檔案</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">下次使用時點「<strong>📂 載入</strong>」，選取 JSON 檔案還原所有欄位</div>
+      </div>
+      <div class="note">建議儲存路徑：<strong>文件 &gt; 報價與成本</strong> 資料夾，依客戶分類管理。</div>
+    </div>
+
+    <!-- 8 -->
+    <div class="section" id="s8">
+      <div class="section-hdr">
+        <div class="section-num">8</div>
+        <h2>列印 / 匯出 PDF</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">點擊工具列「<strong>⎙ 列印 / PDF</strong>」，觸發瀏覽器列印對話框</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">在瀏覽器列印對話框中選擇「<strong>另存為 PDF</strong>」（目的地），確認紙張為 A4 直向</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">PDF 檔名由瀏覽器自動帶入（依檔名規則，見第 10 節）</div>
+      </div>
+      <div class="note">列印同時會自動將本次報價存入 History（最多保留 3 筆）。</div>
+    </div>
+
+    <!-- 9 -->
+    <div class="section" id="s9">
+      <div class="section-hdr">
+        <div class="section-num">9</div>
+        <h2>History 紀錄</h2>
+      </div>
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">點擊工具列「<strong>🕐 History</strong>」查看最近 3 筆列印過的報價單</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">點擊任一紀錄列即可載入該份報價單（會覆蓋目前內容，確認後執行）</div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">點「<strong>✕</strong>」可刪除單筆紀錄</div>
+      </div>
+      <div class="warn">History 儲存在瀏覽器 localStorage，清除瀏覽器快取或換瀏覽器會遺失。重要報價請用「💾 儲存」備份 JSON。</div>
+    </div>
+
+    <!-- 10 -->
+    <div class="section" id="s10">
+      <div class="section-hdr">
+        <div class="section-num">10</div>
+        <h2>檔名規則</h2>
+      </div>
+      <p style="margin-bottom:10px;line-height:1.7;">儲存（JSON）與列印（PDF）的檔名完全一致，格式如下：</p>
+      <div class="fn-box">{QuotNo}_{Customer}_{PartNo}_{Rev}.json / .pdf</div>
+      <table class="info-tbl" style="margin-top:14px;">
+        <thead><tr><th>欄位</th><th>來源</th><th>範例</th></tr></thead>
+        <tbody>
+          <tr><td><strong>QuotNo</strong></td><td>報價單號欄位</td><td><code>202605251</code></td></tr>
+          <tr><td><strong>Customer</strong></td><td>客戶名稱（移除特殊符號）</td><td><code>AbbottMolecular</code></td></tr>
+          <tr><td><strong>PartNo</strong></td><td>第一個品項的 Part No.</td><td><code>00000799</code></td></tr>
+          <tr><td><strong>Rev</strong></td><td>第一個品項 Description 末尾的版本號（自動偵測 REV.X）</td><td><code>REVC</code></td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;line-height:1.7;">完整範例：</p>
+      <div class="fn-box">202605251_AbbottMolecular_00000799_REVC.pdf</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

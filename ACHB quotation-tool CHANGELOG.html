@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>ACHB Quotation Tool — Changelog</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;background:#f0f4f7;color:#222;}
+.page{max-width:860px;margin:40px auto;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.1);overflow:hidden;}
+.page-hdr{background:#2C3A47;color:#fff;padding:28px 36px;display:flex;align-items:center;gap:20px;}
+.page-hdr svg{flex-shrink:0;}
+.hdr-text h1{font-size:18pt;font-weight:700;letter-spacing:1px;}
+.hdr-text p{font-size:9.5pt;color:#7AAFC8;margin-top:4px;}
+.body{padding:32px 36px;}
+
+.version-block{margin-bottom:32px;}
+.version-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  background:#2C3A47;color:#fff;
+  padding:7px 18px;border-radius:20px;
+  font-size:11pt;font-weight:700;letter-spacing:.5px;
+  margin-bottom:14px;
+}
+.version-tag .date{font-size:8.5pt;color:#7AAFC8;font-weight:400;}
+.version-tag.latest{background:#3BC9D9;color:#2C3A47;}
+
+.change-list{list-style:none;padding-left:0;}
+.change-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:9px 14px;border-radius:5px;margin-bottom:6px;
+  background:#f8fbfd;border-left:3px solid #3BC9D9;
+  font-size:10pt;line-height:1.6;
+}
+.change-item.fix{border-left-color:#e67e22;}
+.change-item.feat{border-left-color:#27ae60;}
+.tag{
+  flex-shrink:0;font-size:7.5pt;font-weight:700;letter-spacing:.5px;
+  padding:2px 8px;border-radius:10px;margin-top:2px;
+}
+.tag-fix{background:#fde8d0;color:#c0550a;}
+.tag-feat{background:#d4f5e2;color:#1a7a43;}
+.tag-chg{background:#e5f7fc;color:#1a7a8a;}
+
+hr.divider{border:none;border-top:1px solid #e5edf2;margin:28px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-hdr">
+    <svg width="44" height="52" viewBox="0 0 167 195" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <path d="M43.5757 64.5779H10.5328L0 87.7135H33.5846L43.5757 64.5779Z" fill="#3BC9D9"/>
+      <path d="M33.5461 87.7134L9.63165 142.415H46.6068L59.6073 111.166H112.853L125.412 142.415H167.002L105.811 0H71.7049L43.5773 64.5778H78.165L86.8922 43.4213L104.046 87.7134H33.5461Z" fill="#3BC9D9"/>
+      <path d="M30.4147 194.189L29.2511 190.527H20.0424L18.8788 194.189H9.89081L20.0023 168.104H29.5119L39.4027 194.189H30.4147ZM24.717 175.526L21.848 184.729H27.5257L24.717 175.526Z" fill="#3BC9D9"/>
+      <path d="M78.6649 190.567C77.1001 192.348 73.7095 195 67.8312 195C64.4607 195 61.4714 194.189 58.8833 192.012C54.4696 188.35 54.1285 183.145 54.1285 181.305C54.1285 179.722 54.3292 176.1 56.8771 172.577C60.5084 167.511 65.5641 167.154 67.8914 167.154C73.9101 167.154 77.5013 170.261 78.9659 171.924C79.7483 172.815 80.1295 173.428 80.6913 174.437L73.6894 177.861C73.5691 177.604 73.4286 177.347 73.3283 177.089C72.8669 176.199 71.5628 173.507 68.1923 173.547C66.6475 173.547 65.6845 174.101 65.1629 174.477C62.5347 176.397 62.6551 180.157 62.6551 180.83C62.6551 184.412 63.8187 186.332 65.0826 187.321C66.4068 188.331 67.5905 188.35 68.2325 188.35C71.1215 188.35 72.4656 186.431 72.9873 185.54C73.1678 185.164 73.3283 184.847 73.5891 184.076L80.7514 187.46C79.8085 189.162 79.327 189.835 78.685 190.567H78.6649Z" fill="#3BC9D9"/>
+      <path d="M114.155 194.189V184.135H106.171V194.189H97.8246V168.104H106.171V177.604H114.155V168.104H122.582V194.189H114.155Z" fill="#3BC9D9"/>
+    </svg>
+    <div class="hdr-text">
+      <h1>ACHB Quotation Tool — Changelog</h1>
+      <p>版本更新紀錄</p>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- V2.1 -->
+    <div class="version-block">
+      <div class="version-tag latest">V2.1 <span class="date">2026-05-25</span></div>
+      <ul class="change-list">
+        <li class="change-item fix">
+          <span class="tag tag-fix">FIX</span>
+          <div>儲存草稿（JSON）的檔名編碼邏輯對齊列印 PDF，兩者現在完全同名：<br>
+          <code style="background:#f0f4f7;padding:2px 6px;border-radius:3px;font-size:9pt;">{QuotNo}_{Customer}_{PartNo}_{Rev}.json / .pdf</code></div>
+        </li>
+        <li class="change-item feat">
+          <span class="tag tag-feat">FEAT</span>
+          <div>檔名末尾自動提取第一品項 Description 中的版本號（ex: <code style="background:#f0f4f7;padding:2px 6px;border-radius:3px;font-size:9pt;">REV.C</code> → <code style="background:#f0f4f7;padding:2px 6px;border-radius:3px;font-size:9pt;">REVC</code>），支援格式：REV.A、REV.04 等</div>
+        </li>
+        <li class="change-item feat">
+          <span class="tag tag-feat">FEAT</span>
+          <div>品項新增「⧉ 複製」按鈕：點擊後於該品項下方插入完整副本（含所有數量列），供快速建立相似品項</div>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- V2 -->
+    <div class="version-block">
+      <div class="version-tag">V2 <span class="date">初版發布</span></div>
+      <ul class="change-list">
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>左右分割介面：左側編輯面板 + 右側 A4 即時預覽</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>PDF 匯入：自動解析品項 Part No. / Description / Qty，支援人工修正後再匯入</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>多數量列報價：同一品項可設定多組 Qty × Unit Price，自動計算 Amount</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>報價單號自動產生：依業務人員 ID + 日期 + 流水號組合（含 localStorage 序列記憶）</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>客戶資料庫：內建 34 家客戶名稱與代碼，選取後自動帶入</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>草稿儲存／載入：匯出 JSON 檔案，可跨工作階段還原所有欄位</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>History：自動儲存最近 3 筆列印紀錄於 localStorage，可一鍵載入</div>
+        </li>
+        <li class="change-item">
+          <span class="tag tag-chg">FEAT</span>
+          <div>列印 / PDF 輸出：A4 尺寸，隱藏左側面板，支援瀏覽器列印為 PDF</div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

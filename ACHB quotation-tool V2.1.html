@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<title>ACHB Quotation Tool V2</title>
+<title>ACHB Quotation Tool V2.1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 /* ============================================================
@@ -93,6 +93,11 @@ html,body{height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;fon
   border-radius:3px;cursor:pointer;font-size:8pt;padding:2px 8px;font-family:Arial;
 }
 .ic-del-btn:hover{background:rgba(192,57,43,.15);}
+.ic-copy-btn{
+  background:none;border:1px solid #3BC9D9;color:#3BC9D9;
+  border-radius:3px;cursor:pointer;font-size:8pt;padding:2px 8px;font-family:Arial;
+}
+.ic-copy-btn:hover{background:rgba(59,201,217,.15);}
 
 /* qty mini-table inside card */
 .qty-mini-tbl{width:100%;border-collapse:collapse;margin-top:4px;}
@@ -357,7 +362,7 @@ html,body{height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;fon
 
 <!-- ===== TOOLBAR ===== -->
 <div id="toolbar">
-  <h1>ACHB Quotation Tool V2</h1>
+  <h1>ACHB Quotation Tool V2.1</h1>
   <button class="tbtn tbtn-orange" onclick="document.getElementById('pdfInput').click()">📥 匯入 PDF</button>
   <input type="file" id="pdfInput" accept=".pdf" style="display:none">
   <div class="sep"></div>
@@ -897,7 +902,10 @@ function renderLeftItems(){
     card.innerHTML=
       '<div class="item-card-hdr">'+
         '<span class="item-num-badge">ITEM '+(iIdx+1)+'</span>'+
-        '<button class="ic-del-btn" onclick="removeItem('+iIdx+')">✕ 刪除</button>'+
+        '<div style="display:flex;gap:5px;">'+
+          '<button class="ic-copy-btn" onclick="copyItem('+iIdx+')">⧉ 複製</button>'+
+          '<button class="ic-del-btn" onclick="removeItem('+iIdx+')">✕ 刪除</button>'+
+        '</div>'+
       '</div>'+
       '<div class="lp-field"><span class="lp-label">Part No.</span>'+
         '<input class="lp-input" data-i="'+iIdx+'" data-f="partNo" value="'+escAttr(item.partNo)+'">'+
@@ -1054,6 +1062,14 @@ function removeItem(i){
   items.splice(i,1);renderLeftItems();renderPreviewItems();
 }
 
+function copyItem(i){
+  var copy=JSON.parse(JSON.stringify(items[i]));
+  items.splice(i+1,0,copy);
+  renderLeftItems();renderPreviewItems();
+  var cards=document.getElementById('itemsEditor').querySelectorAll('.item-card');
+  if(cards[i+1])cards[i+1].scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
 function addQtyRow(i){
   items[i].qtys.push({q:1,p:0});renderLeftItems();renderPreviewItems();
 }
@@ -1112,10 +1128,11 @@ function applyState(s){
 // ============================================================
 function saveDraft(){
   var state=gatherState();
-  var quotNo=cleanFn(state.fields.quotNo||'QUOT');
+  var quotNo=cleanFn(state.fields.quotNo||'');
   var customer=cleanFn(state.fields.customer||'');
-  var parts=[quotNo,customer].filter(Boolean);
-  var filename=(parts.join('_')||'ACHB_quotation')+'.json';
+  var partNo=state.items&&state.items.length>0?cleanFn(state.items[0].partNo):'';
+  var desc=state.items&&state.items.length>0?state.items[0].productName:'';
+  var filename=buildFilename(quotNo,customer,partNo,desc)+'.json';
   var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -1201,7 +1218,8 @@ function printWithFilename(){
   var quotNo=cleanFn(document.getElementById('fQuotNo').value);
   var customer=cleanFn(document.getElementById('fCustomer').value);
   var partNo=items.length>0?cleanFn(items[0].partNo):'';
-  var filename=[quotNo,customer,partNo].filter(function(s){return s.length>0;}).join('_');
+  var desc=items.length>0?items[0].productName:'';
+  var filename=buildFilename(quotNo,customer,partNo,desc);
   var prev=document.title;
   document.title=filename||'ACHB_Quotation';
   window.addEventListener('afterprint',function restore(){
@@ -1325,6 +1343,11 @@ function hideImportOverlay(){document.getElementById('importOverlay').classList.
 // HELPERS
 // ============================================================
 function cleanFn(s){return String(s||'').trim().replace(/[\s/\\:*?"<>|,.'()]/g,'');}
+function extractRev(desc){var m=String(desc||'').match(/\bREV[.\s]*([A-Z0-9]+)\s*$/i);return m?'REV'+m[1].toUpperCase():'';}
+function buildFilename(quotNo,customer,partNo,desc){
+  var rev=extractRev(desc);
+  return [quotNo,customer,partNo,rev].filter(function(s){return s.length>0;}).join('_')||'ACHB_Quotation';
+}
 function fmt(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function escAttr(s){return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
