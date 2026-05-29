@@ -5,54 +5,55 @@
 <title>ACHB Quotation Tool — Changelog</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;background:#f0f4f7;color:#222;}
-.page{max-width:860px;margin:40px auto;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.1);overflow:hidden;}
-.page-hdr{background:#2C3A47;color:#fff;padding:28px 36px;display:flex;align-items:center;gap:20px;}
+body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;background:#07101D;color:#B8D0E8;}
+.page{max-width:860px;margin:40px auto;background:#0D1A2A;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.5);overflow:hidden;}
+.page-hdr{background:#0A1520;border-bottom:1px solid #1C3050;padding:28px 36px;display:flex;align-items:center;gap:20px;}
 .page-hdr svg{flex-shrink:0;}
-.hdr-text h1{font-size:18pt;font-weight:700;letter-spacing:1px;}
-.hdr-text p{font-size:9.5pt;color:#7AAFC8;margin-top:4px;}
+.hdr-text h1{font-size:18pt;font-weight:700;letter-spacing:1px;color:#DFF0FF;}
+.hdr-text p{font-size:9.5pt;color:#507090;margin-top:4px;}
 .body{padding:32px 36px;}
 
 .version-block{margin-bottom:32px;}
 .version-tag{
   display:inline-flex;align-items:center;gap:10px;
-  background:#2C3A47;color:#fff;
+  background:#132030;color:#DFF0FF;border:1px solid #1C3050;
   padding:7px 18px;border-radius:20px;
   font-size:11pt;font-weight:700;letter-spacing:.5px;
   margin-bottom:14px;
 }
-.version-tag .date{font-size:8.5pt;color:#7AAFC8;font-weight:400;}
-.version-tag.latest{background:#3BC9D9;color:#2C3A47;}
+.version-tag .date{font-size:8.5pt;color:#507090;font-weight:400;}
+.version-tag.latest{background:rgba(14,165,233,.18);border-color:rgba(14,165,233,.4);color:#0EA5E9;}
 
 .change-list{list-style:none;padding-left:0;}
 .change-item{
   display:flex;gap:12px;align-items:flex-start;
   padding:9px 14px;border-radius:5px;margin-bottom:6px;
-  background:#f8fbfd;border-left:3px solid #3BC9D9;
-  font-size:10pt;line-height:1.6;
+  background:#132030;border-left:3px solid #1C3050;
+  font-size:10pt;line-height:1.6;color:#B8D0E8;
 }
-.change-item.fix{border-left-color:#e67e22;}
-.change-item.feat{border-left-color:#27ae60;}
+.change-item.fix{border-left-color:#F59E0B;}
+.change-item.feat{border-left-color:#10D9A0;}
 .tag{
   flex-shrink:0;font-size:7.5pt;font-weight:700;letter-spacing:.5px;
   padding:2px 8px;border-radius:10px;margin-top:2px;
 }
-.tag-fix{background:#fde8d0;color:#c0550a;}
-.tag-feat{background:#d4f5e2;color:#1a7a43;}
-.tag-chg{background:#e5f7fc;color:#1a7a8a;}
+.tag-fix{background:rgba(245,158,11,.15);color:#F59E0B;}
+.tag-feat{background:rgba(16,217,160,.12);color:#10D9A0;}
+.tag-chg{background:rgba(14,165,233,.12);color:#0EA5E9;}
 
-hr.divider{border:none;border-top:1px solid #e5edf2;margin:28px 0;}
+hr.divider{border:none;border-top:1px solid #1C3050;margin:28px 0;}
+code{background:#132030;border:1px solid #1C3050;padding:1px 6px;border-radius:3px;font-size:9pt;color:#0EA5E9;font-family:Consolas,'Courier New',monospace;}
 </style>
 </head>
 <body>
 <div class="page">
   <div class="page-hdr">
     <svg width="44" height="52" viewBox="0 0 167 195" xmlns="http://www.w3.org/2000/svg" fill="none">
-      <path d="M43.5757 64.5779H10.5328L0 87.7135H33.5846L43.5757 64.5779Z" fill="#3BC9D9"/>
-      <path d="M33.5461 87.7134L9.63165 142.415H46.6068L59.6073 111.166H112.853L125.412 142.415H167.002L105.811 0H71.7049L43.5773 64.5778H78.165L86.8922 43.4213L104.046 87.7134H33.5461Z" fill="#3BC9D9"/>
-      <path d="M30.4147 194.189L29.2511 190.527H20.0424L18.8788 194.189H9.89081L20.0023 168.104H29.5119L39.4027 194.189H30.4147ZM24.717 175.526L21.848 184.729H27.5257L24.717 175.526Z" fill="#3BC9D9"/>
-      <path d="M78.6649 190.567C77.1001 192.348 73.7095 195 67.8312 195C64.4607 195 61.4714 194.189 58.8833 192.012C54.4696 188.35 54.1285 183.145 54.1285 181.305C54.1285 179.722 54.3292 176.1 56.8771 172.577C60.5084 167.511 65.5641 167.154 67.8914 167.154C73.9101 167.154 77.5013 170.261 78.9659 171.924C79.7483 172.815 80.1295 173.428 80.6913 174.437L73.6894 177.861C73.5691 177.604 73.4286 177.347 73.3283 177.089C72.8669 176.199 71.5628 173.507 68.1923 173.547C66.6475 173.547 65.6845 174.101 65.1629 174.477C62.5347 176.397 62.6551 180.157 62.6551 180.83C62.6551 184.412 63.8187 186.332 65.0826 187.321C66.4068 188.331 67.5905 188.35 68.2325 188.35C71.1215 188.35 72.4656 186.431 72.9873 185.54C73.1678 185.164 73.3283 184.847 73.5891 184.076L80.7514 187.46C79.8085 189.162 79.327 189.835 78.685 190.567H78.6649Z" fill="#3BC9D9"/>
-      <path d="M114.155 194.189V184.135H106.171V194.189H97.8246V168.104H106.171V177.604H114.155V168.104H122.582V194.189H114.155Z" fill="#3BC9D9"/>
+      <path d="M43.5757 64.5779H10.5328L0 87.7135H33.5846L43.5757 64.5779Z" fill="#0EA5E9"/>
+      <path d="M33.5461 87.7134L9.63165 142.415H46.6068L59.6073 111.166H112.853L125.412 142.415H167.002L105.811 0H71.7049L43.5773 64.5778H78.165L86.8922 43.4213L104.046 87.7134H33.5461Z" fill="#0EA5E9"/>
+      <path d="M30.4147 194.189L29.2511 190.527H20.0424L18.8788 194.189H9.89081L20.0023 168.104H29.5119L39.4027 194.189H30.4147ZM24.717 175.526L21.848 184.729H27.5257L24.717 175.526Z" fill="#0EA5E9"/>
+      <path d="M78.6649 190.567C77.1001 192.348 73.7095 195 67.8312 195C64.4607 195 61.4714 194.189 58.8833 192.012C54.4696 188.35 54.1285 183.145 54.1285 181.305C54.1285 179.722 54.3292 176.1 56.8771 172.577C60.5084 167.511 65.5641 167.154 67.8914 167.154C73.9101 167.154 77.5013 170.261 78.9659 171.924C79.7483 172.815 80.1295 173.428 80.6913 174.437L73.6894 177.861C73.5691 177.604 73.4286 177.347 73.3283 177.089C72.8669 176.199 71.5628 173.507 68.1923 173.547C66.6475 173.547 65.6845 174.101 65.1629 174.477C62.5347 176.397 62.6551 180.157 62.6551 180.83C62.6551 184.412 63.8187 186.332 65.0826 187.321C66.4068 188.331 67.5905 188.35 68.2325 188.35C71.1215 188.35 72.4656 186.431 72.9873 185.54C73.1678 185.164 73.3283 184.847 73.5891 184.076L80.7514 187.46C79.8085 189.162 79.327 189.835 78.685 190.567H78.6649Z" fill="#0EA5E9"/>
+      <path d="M114.155 194.189V184.135H106.171V194.189H97.8246V168.104H106.171V177.604H114.155V168.104H122.582V194.189H114.155Z" fill="#0EA5E9"/>
     </svg>
     <div class="hdr-text">
       <h1>ACHB Quotation Tool — Changelog</h1>
@@ -152,3 +153,4 @@ hr.divider{border:none;border-top:1px solid #e5edf2;margin:28px 0;}
 </div>
 </body>
 </html>
+
