@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>QUOTATION | ACHB Tool V2.2</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23061316'/%3E%3Ccircle cx='32' cy='31' r='17' fill='none' stroke='%231CCAD3' stroke-width='8'/%3E%3Cpath d='M40 42l10 8' stroke='%23F0B84D' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+/* ============================================================
+   BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;font-size:10pt;}
+@media print{html,body{height:auto;overflow:visible;}}
+
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+#toolbar{
+  background:#252F38;color:#fff;
+  padding:8px 16px;
+  display:flex;align-items:center;gap:7px;
+  position:relative;z-index:300;
+  box-shadow:0 2px 10px rgba(0,0,0,.5);
+  flex-shrink:0;flex-wrap:wrap;
+}
+#toolbar h1{font-size:12px;flex:1;font-weight:700;letter-spacing:.3px;white-space:nowrap;}
+.sep{width:1px;height:20px;background:#3a5068;margin:0 2px;}
+.tbtn{
+  padding:5px 13px;border:none;border-radius:4px;
+  cursor:pointer;font-size:11px;font-weight:700;font-family:Arial;white-space:nowrap;
+}
+.tbtn:hover{opacity:.85;}
+.tbtn-cyan{background:#3BC9D9;color:#fff;}
+.tbtn-green{background:#27ae60;color:#fff;}
+.tbtn-orange{background:#e67e22;color:#fff;}
+.tbtn-steel{background:#3a5068;color:#fff;}
+.tbtn-indigo{background:#5b6fbf;color:#fff;}
+
+/* ============================================================
+   MAIN LAYOUT — split panel
+   ============================================================ */
+#main-layout{
+  display:flex;flex:1;overflow:hidden;
+  height:calc(100vh - 38px);
+}
+
+/* ============================================================
+   LEFT PANEL — dark editor
+   ============================================================ */
+#left-panel{
+  width:380px;min-width:300px;
+  background:#2C3A47;
+  color:#dce8f0;
+  overflow-y:auto;
+  flex-shrink:0;
+  display:flex;flex-direction:column;
+  border-right:2px solid #1A2830;
+}
+.lp-sec{border-bottom:1px solid #374B5A;padding:12px 14px;}
+.lp-sec-title{
+  font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  color:#3BC9D9;margin-bottom:10px;display:flex;align-items:center;gap:6px;
+}
+.lp-sec-title::after{content:'';flex:1;height:1px;background:#374B5A;}
+.lp-row{display:flex;gap:8px;}
+.lp-field{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;flex:1;}
+.lp-field:last-child{margin-bottom:0;}
+.lp-label{font-size:8.5px;color:#7AAFC8;text-transform:uppercase;letter-spacing:.5px;}
+.lp-input,.lp-select,.lp-textarea{
+  background:#252F38;border:1px solid #3A4D5D;border-radius:4px;
+  color:#dce8f0;padding:6px 8px;font-size:9.5pt;font-family:Arial;
+  width:100%;outline:none;
+}
+.lp-input:focus,.lp-select:focus,.lp-textarea:focus{border-color:#3BC9D9;background:#1C2E3C;}
+.lp-select{appearance:none;cursor:pointer;}
+.lp-textarea{resize:none;min-height:38px;line-height:1.4;}
+
+/* ---- item card ---- */
+.item-card{
+  background:#252F38;border:1px solid #3A4D5D;border-radius:5px;
+  padding:10px;margin-bottom:10px;
+}
+.item-card-hdr{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:9px;
+}
+.item-num-badge{
+  font-size:8.5px;background:#3BC9D9;color:#252F38;
+  border-radius:10px;padding:2px 8px;font-weight:700;
+}
+.ic-del-btn{
+  background:none;border:1px solid #c0392b;color:#c0392b;
+  border-radius:3px;cursor:pointer;font-size:8pt;padding:2px 8px;font-family:Arial;
+}
+.ic-del-btn:hover{background:rgba(192,57,43,.15);}
+.ic-copy-btn{
+  background:none;border:1px solid #3BC9D9;color:#3BC9D9;
+  border-radius:3px;cursor:pointer;font-size:8pt;padding:2px 8px;font-family:Arial;
+}
+.ic-copy-btn:hover{background:rgba(59,201,217,.15);}
+
+/* qty mini-table inside card */
+.qty-mini-tbl{width:100%;border-collapse:collapse;margin-top:4px;}
+.qty-mini-tbl th{
+  font-size:8px;color:#7AAFC8;text-transform:uppercase;
+  text-align:left;padding:3px 5px;border-bottom:1px solid #3A4D5D;
+}
+.qty-mini-tbl td{padding:3px 3px;}
+.qty-mini-tbl .lp-input{padding:4px 6px;font-size:9pt;}
+.qty-row-del{
+  background:none;border:none;color:#c0392b;cursor:pointer;
+  font-size:13px;line-height:1;padding:0 3px;
+}
+.add-qty-btn{
+  margin-top:6px;width:100%;padding:4px;
+  background:none;border:1px dashed #3BC9D9;color:#3BC9D9;
+  border-radius:3px;cursor:pointer;font-size:8.5pt;font-family:Arial;
+}
+.add-qty-btn:hover{background:rgba(59,201,217,.08);}
+.add-item-btn{
+  width:100%;padding:9px;background:none;
+  border:1px dashed #3BC9D9;border-radius:5px;
+  color:#3BC9D9;cursor:pointer;font-size:10pt;font-family:Arial;
+}
+.add-item-btn:hover{background:rgba(59,201,217,.07);}
+
+/* remarks in left panel */
+.rem-lp-row{display:flex;gap:6px;align-items:flex-start;margin-bottom:7px;}
+.rem-del-lp{
+  background:none;border:1px solid #c0392b;color:#c0392b;
+  border-radius:3px;cursor:pointer;font-size:8pt;padding:3px 6px;flex-shrink:0;
+  font-family:Arial;margin-top:1px;
+}
+.add-rem-lp{
+  width:100%;padding:6px;background:none;
+  border:1px dashed #3BC9D9;border-radius:4px;
+  color:#3BC9D9;cursor:pointer;font-size:9.5pt;font-family:Arial;
+}
+.add-rem-lp:hover{background:rgba(59,201,217,.07);}
+
+/* ============================================================
+   RIGHT PANEL — preview area
+   ============================================================ */
+#right-panel{
+  flex:1;background:#b8b8b8;overflow:auto;
+  padding:24px;display:flex;justify-content:center;align-items:flex-start;
+}
+#preview-host{
+  position:relative;flex-shrink:0;
+}
+#preview-scaler{
+  transform-origin:top center;
+  display:inline-block;
+}
+
+/* ============================================================
+   A4 PAGE
+   ============================================================ */
+.page{
+  background:#fff;
+  width:795px;
+  min-height:1122px;
+  padding:28px 40px 28px;
+  box-shadow:0 0 30px rgba(0,0,0,.22);
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:10pt;
+  display:flex;flex-direction:column;
+  position:relative;
+}
+
+/* ---- A4 Header ---- */
+.page-hdr{margin-bottom:14px;}
+
+.page-co-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:12px;margin-bottom:16px;
+  border-bottom:3px solid #3BC9D9;
+}
+.page-co-left{display:flex;align-items:center;gap:14px;}
+.page-co-text{font-size:9.5pt;line-height:1.7;color:#555;}
+.page-co-text strong{font-size:14pt;color:#2C3A47;display:block;font-weight:700;margin-bottom:3px;}
+.page-co-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;}
+.page-title{font-size:26px;font-weight:700;color:#3BC9D9;letter-spacing:5px;line-height:1;}
+.page-quotno{font-size:11pt;color:#2C3A47;font-weight:700;margin-top:6px;}
+.page-printed-date{font-size:8.5pt;color:#777;text-align:right;line-height:1.75;margin-top:2px;}
+
+/* customer + doc info grid */
+.hdr-info-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1.5px solid #2C3A47;border-radius:4px;overflow:hidden;
+}
+.hdr-bill-to{
+  padding:12px 16px;
+  border-right:1px solid #dde8ee;
+}
+.hdr-doc-info{
+  padding:12px 16px;
+  background:#f9fbfc;
+}
+.hdr-sec-label{
+  font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:#3BC9D9;margin-bottom:7px;padding-bottom:3px;border-bottom:1px solid #e5edf2;
+}
+.hdr-row{display:flex;gap:5px;font-size:10pt;margin-bottom:4px;line-height:1.5;}
+.hdr-lbl{font-weight:700;color:#2C3A47;white-space:nowrap;min-width:85px;}
+.hdr-val{color:#222;}
+
+/* ---- Items table ---- */
+.items-tbl{width:100%;border-collapse:collapse;font-size:9.5pt;margin-bottom:8px;}
+.items-tbl th{padding:8px 6px;font-weight:700;text-align:center;font-size:10pt;}
+.items-tbl td{padding:5px 6px;vertical-align:middle;font-size:9.5pt;}
+.c-no{text-align:center;width:38px;}
+.c-qty{text-align:center;width:48px;}
+.c-price{text-align:right;width:78px;}
+.c-amt{text-align:right;width:84px;}
+.c-lead{text-align:center;width:90px;}
+
+.t-modern .items-tbl thead th{
+  background:#2C3A47;color:#fff;border:1px solid #2C3A47;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.t-modern .items-tbl td{border:1px solid #dde8ee;}
+.t-modern .items-tbl tbody tr:nth-child(even) td{background:#f8fbfd;}
+
+/* ---- Remarks ---- */
+.remark-sec{margin-top:8px;}
+.remark-lbl{font-weight:700;font-size:8.5pt;margin-bottom:6px;color:#3BC9D9;text-transform:uppercase;letter-spacing:.8px;padding-bottom:3px;border-bottom:1px solid #e5edf2;}
+.rem-list{list-style:none;padding-left:10px;}
+.rem-item{font-size:9.5pt;line-height:1.6;margin-bottom:3px;padding-left:12px;position:relative;}
+.rem-item::before{content:"•";position:absolute;left:0;color:#3BC9D9;font-size:11pt;line-height:1.4;}
+
+/* ---- Signature row ---- */
+.page-sig-spacer{flex:1;min-height:100px;}
+.sig-row{
+  display:flex;gap:40px;padding-top:28px;margin-bottom:14px;
+}
+.sig-block{flex:1;}
+.sig-line{border-top:1px solid #555;padding-top:4px;font-size:8.5pt;color:#555;}
+
+/* ---- Company footer ---- */
+.page-company-footer{display:none;}
+.footer-logo{flex-shrink:0;}
+.footer-co-info{flex:1;font-size:8.5pt;line-height:1.75;color:#444;}
+.footer-co-info strong{font-size:9.5pt;color:#2C3A47;display:block;}
+.footer-contact-info{font-size:8.5pt;line-height:1.75;color:#444;text-align:right;}
+
+/* ============================================================
+   OVERLAY & TOAST
+   ============================================================ */
+#importOverlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  color:#fff;font-size:14px;font-family:Arial;
+}
+#importOverlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:4px solid rgba(255,255,255,.3);
+  border-top-color:#3BC9D9;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#toast{
+  display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#2C3A47;color:#fff;padding:10px 22px;border-radius:6px;
+  font-size:12px;z-index:1100;border-left:4px solid #3BC9D9;
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+#toast.show{display:block;}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:1000;align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  background:#fff;border-radius:8px;
+  width:760px;max-width:96vw;max-height:88vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden;
+}
+.modal-box.wide{width:940px;}
+.modal-hdr{
+  background:#2C3A47;color:#fff;padding:13px 20px;
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0;
+}
+.modal-hdr h2{font-size:13px;font-weight:700;letter-spacing:.3px;}
+.modal-close{
+  background:none;border:none;color:#fff;font-size:18px;cursor:pointer;
+  line-height:1;padding:2px 6px;border-radius:3px;
+}
+.modal-close:hover{background:rgba(255,255,255,.15);}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1;font-size:10pt;}
+.modal-footer{
+  padding:11px 20px;border-top:1px solid #dde8ee;
+  display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;
+}
+
+/* History */
+.hist-hdr-row{
+  display:grid;grid-template-columns:86px 150px 1fr 60px;
+  background:#f0f4f7;padding:6px 10px;font-weight:700;
+  font-size:9pt;border-bottom:2px solid #dde8ee;
+}
+.hist-row{
+  display:grid;grid-template-columns:86px 150px 1fr 60px;
+  padding:7px 10px;cursor:pointer;font-size:9.5pt;
+  border-bottom:1px solid #eef2f5;transition:background .12s;
+}
+.hist-row:hover{background:#e5f7fc;}
+.hist-empty{text-align:center;color:#888;padding:30px 0;font-size:11pt;}
+.hist-delete{
+  background:none;border:none;color:#c0392b;cursor:pointer;
+  font-size:9pt;padding:2px 6px;border-radius:3px;
+}
+.hist-delete:hover{background:#fde8e4;}
+
+/* PDF modal */
+.pdf-layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.pdf-raw{
+  background:#f8f8f8;border:1px solid #dde;border-radius:4px;
+  padding:10px;font-size:8pt;font-family:monospace;white-space:pre-wrap;
+  overflow-y:auto;height:380px;color:#333;line-height:1.5;
+}
+.pdf-parsed-hdr{font-weight:700;font-size:9.5pt;margin-bottom:6px;color:#2C3A47;}
+.pdf-tbl{width:100%;border-collapse:collapse;font-size:9pt;}
+.pdf-tbl th{background:#2C3A47;color:#fff;padding:5px;text-align:left;}
+.pdf-tbl td{padding:4px 5px;border-bottom:1px solid #eee;vertical-align:top;}
+.pdf-tbl input{
+  width:100%;border:none;border-bottom:1px solid #3BC9D9;
+  background:transparent;font-size:9pt;padding:1px 2px;outline:none;font-family:Arial;
+}
+.pdf-tbl input:focus{background:#e5f7fc;}
+.pdf-row-del{background:none;border:none;color:#c0392b;cursor:pointer;font-size:10pt;}
+.pdf-add-row{
+  margin-top:8px;padding:4px 12px;font-size:9pt;
+  border:1px dashed #3BC9D9;color:#3BC9D9;background:none;
+  border-radius:3px;cursor:pointer;
+}
+.pdf-add-row:hover{background:#e5f7fc;}
+.pdf-no-text{color:#888;font-size:10pt;text-align:center;padding:20px 0;}
+
+/* ============================================================
+   V2.2 THEME - ACHB Precision Quotation
+   ============================================================ */
+:root{
+  --q-bg:#061316;
+  --q-panel:#10252B;
+  --q-panel-2:#17323A;
+  --q-panel-3:#234650;
+  --q-line:#315862;
+  --q-line-2:#4B7480;
+  --q-text:#F3FAFB;
+  --q-muted:#B5C9CF;
+  --q-soft:#86A3AA;
+  --q-teal:#1CCAD3;
+  --q-teal-soft:rgba(28,202,211,.16);
+  --q-green:#48D597;
+  --q-green-soft:rgba(72,213,151,.13);
+  --q-gold:#F0B84D;
+  --q-gold-soft:rgba(240,184,77,.13);
+  --q-red:#FB7185;
+  --q-shadow:0 18px 42px rgba(0,0,0,.32);
+}
+html,body{
+  font-family:'IBM Plex Sans','Noto Sans TC',Arial,Helvetica,sans-serif;
+  font-size:11.5pt;
+  background:
+    linear-gradient(180deg,rgba(28,202,211,.10),transparent 220px),
+    radial-gradient(circle at 14% 12%,rgba(72,213,151,.08),transparent 300px),
+    var(--q-bg);
+}
+#toolbar{
+  min-height:58px;
+  background:linear-gradient(90deg,#07151A,#10252B 44%,#0B1F23);
+  color:var(--q-text);
+  padding:10px 18px;
+  gap:9px;
+  border-bottom:1px solid rgba(28,202,211,.34);
+  box-shadow:0 10px 26px rgba(0,0,0,.34);
+}
+#toolbar h1{
+  font-size:15px;
+  color:var(--q-text);
+  letter-spacing:.7px;
+}
+#toolbar h1::before{
+  content:'ACHB';
+  display:inline-block;
+  margin-right:12px;
+  font-family:'Rajdhani',Arial,sans-serif;
+  font-size:22px;
+  line-height:1;
+  letter-spacing:3px;
+  color:var(--q-teal);
+  vertical-align:-2px;
+}
+.sep{height:24px;background:rgba(181,201,207,.22);}
+.tbtn{
+  min-height:34px;
+  padding:7px 14px;
+  border:1px solid rgba(181,201,207,.24);
+  border-radius:5px;
+  font-size:12.5px;
+  font-family:'IBM Plex Sans','Noto Sans TC',Arial,sans-serif;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset;
+}
+.tbtn-cyan,.tbtn-steel{background:var(--q-teal-soft);color:var(--q-teal);border-color:rgba(28,202,211,.42);}
+.tbtn-green{background:var(--q-green-soft);color:var(--q-green);border-color:rgba(72,213,151,.42);}
+.tbtn-orange{background:var(--q-gold-soft);color:var(--q-gold);border-color:rgba(240,184,77,.48);}
+.tbtn-indigo{background:rgba(28,202,211,.10);color:var(--q-muted);border-color:var(--q-line);}
+
+#main-layout{height:calc(100vh - 58px);background:var(--q-bg);}
+#left-panel{
+  width:430px;min-width:360px;
+  background:rgba(16,37,43,.96);
+  color:var(--q-text);
+  border-right:1px solid rgba(28,202,211,.30);
+  box-shadow:10px 0 28px rgba(0,0,0,.20);
+}
+.lp-sec{border-bottom:1px solid var(--q-line);padding:15px 16px;}
+.lp-sec-title{
+  font-size:11px;
+  color:var(--q-teal);
+  letter-spacing:1px;
+  margin-bottom:12px;
+}
+.lp-sec-title::after{background:var(--q-line);}
+.lp-row{gap:10px;}
+.lp-field{gap:5px;margin-bottom:11px;}
+.lp-label{
+  font-size:10.5px;
+  color:var(--q-muted);
+  font-weight:700;
+}
+.lp-input,.lp-select,.lp-textarea{
+  background:var(--q-panel-2);
+  border:1px solid var(--q-line-2);
+  border-radius:5px;
+  color:var(--q-text);
+  padding:8px 10px;
+  font-size:11.5pt;
+  font-family:'IBM Plex Sans','Noto Sans TC',Arial,sans-serif;
+}
+.lp-input:focus,.lp-select:focus,.lp-textarea:focus{
+  border-color:var(--q-teal);
+  background:#102A31;
+  box-shadow:0 0 0 2px rgba(28,202,211,.15);
+}
+.item-card{
+  background:rgba(23,50,58,.88);
+  border:1px solid var(--q-line);
+  border-radius:8px;
+  padding:13px;
+  margin-bottom:12px;
+}
+.item-num-badge{
+  font-size:10.5px;
+  background:var(--q-teal);
+  color:#041416;
+  border-radius:999px;
+  padding:3px 10px;
+}
+.ic-copy-btn,.add-qty-btn,.add-item-btn,.add-rem-lp,.pdf-add-row{
+  border-color:rgba(28,202,211,.46);
+  color:var(--q-teal);
+  font-family:'IBM Plex Sans','Noto Sans TC',Arial,sans-serif;
+}
+.ic-copy-btn:hover,.add-qty-btn:hover,.add-item-btn:hover,.add-rem-lp:hover,.pdf-add-row:hover{background:rgba(28,202,211,.09);}
+.ic-del-btn,.rem-del-lp,.pdf-row-del{border-color:var(--q-red);color:var(--q-red);}
+.qty-mini-tbl th{
+  font-size:9.5px;
+  color:var(--q-muted);
+  border-bottom:1px solid var(--q-line);
+}
+.qty-mini-tbl td{padding:5px 3px;}
+.qty-mini-tbl .lp-input{font-size:10.5pt;padding:6px 8px;}
+
+#right-panel{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.10),transparent 180px),
+    #D3DCE0;
+  padding:30px;
+}
+.page{
+  box-shadow:0 18px 48px rgba(5,19,22,.32);
+}
+.page-co-header{border-bottom-color:var(--q-teal);}
+.page-title{color:var(--q-teal);}
+.page-quotno,.page-co-text strong,.hdr-lbl,.footer-co-info strong,.pdf-parsed-hdr{color:#17323A;}
+.hdr-info-grid{border-color:#17323A;}
+.hdr-sec-label,.remark-lbl{color:var(--q-teal);}
+.t-modern .items-tbl thead th{
+  background:#17323A;
+  border-color:#17323A;
+}
+.t-modern .items-tbl tbody tr:nth-child(even) td{background:#F5FAFA;}
+.remark-lbl{border-bottom-color:#DDEBED;}
+.rem-item::before{color:var(--q-teal);}
+
+.modal-overlay{background:rgba(6,19,22,.68);}
+.modal-box{
+  background:#F6FAFB;
+  border:1px solid var(--q-line);
+  box-shadow:var(--q-shadow);
+}
+.modal-hdr{
+  background:linear-gradient(90deg,#10252B,#17323A);
+  border-bottom-color:var(--q-line);
+}
+.modal-hdr h2{font-size:15px;}
+.modal-body{font-size:11pt;}
+.hist-hdr-row{
+  background:#EEF6F7;
+  color:#315862;
+  font-size:10pt;
+}
+.hist-row{font-size:10.5pt;}
+#toast{
+  background:#10252B;
+  color:var(--q-text);
+  border-left-color:var(--q-teal);
+  font-size:13px;
+}
+.spinner{border-top-color:var(--q-teal);}
+
+@media (max-width:980px){
+  html,body{overflow:auto;height:auto;}
+  #toolbar{position:static;align-items:stretch;}
+  #toolbar h1{flex:1 1 100%;}
+  .sep{display:none;}
+  .tbtn{flex:1 1 calc(50% - 8px);}
+  #main-layout{height:auto;display:flex;flex-direction:column;overflow:visible;}
+  #left-panel{width:100%;min-width:0;max-height:none;overflow:visible;border-right:none;border-bottom:1px solid var(--q-line);}
+  #right-panel{padding:14px;overflow:auto;}
+  .lp-row{flex-direction:column;gap:0;}
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+@page{margin:0;size:A4 portrait;}
+@media print{
+  html,body{height:auto;overflow:visible;}
+  #toolbar,#left-panel,#importOverlay,#toast{display:none!important;}
+  .modal-overlay{display:none!important;}
+  #main-layout{display:block;height:auto;}
+  #right-panel{padding:0;background:none;display:block;overflow:visible;}
+  #preview-host{height:auto!important;}
+  #preview-scaler{transform:none!important;display:block;}
+  .page{
+    box-shadow:none;width:100%;
+    padding:8mm 12mm;min-height:auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOOLBAR ===== -->
+<div id="toolbar">
+  <h1>Quotation Tool V2.2</h1>
+  <button class="tbtn tbtn-orange" onclick="document.getElementById('pdfInput').click()">📥 匯入 PDF</button>
+  <input type="file" id="pdfInput" accept=".pdf" style="display:none">
+  <div class="sep"></div>
+  <button class="tbtn tbtn-green" onclick="printWithFilename()">⎙ 列印 / PDF</button>
+  <div class="sep"></div>
+  <button class="tbtn tbtn-steel" onclick="saveDraft()" title="儲存為 JSON 檔案">💾 儲存</button>
+  <button class="tbtn tbtn-steel" onclick="loadDraft()" title="從 JSON 檔案載入">📂 載入</button>
+  <button class="tbtn tbtn-indigo" onclick="showHistory()" title="最近 3 筆">🕐 History</button>
+</div>
+
+<!-- ===== IMPORT OVERLAY ===== -->
+<div id="importOverlay">
+  <div class="spinner"></div>
+  <div id="importMsg">正在解析 PDF…</div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast"></div>
+
+<!-- ===== HISTORY MODAL ===== -->
+<div class="modal-overlay" id="histModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h2>🕐 最近 3 筆報價紀錄</h2>
+      <button class="modal-close" onclick="closeModal('histModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <div class="hist-hdr-row">
+        <span>日期</span><span>Quotation No.</span><span>Customer</span><span>Items</span>
+      </div>
+      <div id="histBody"></div>
+    </div>
+    <div class="modal-footer">
+      <span style="font-size:9pt;color:#888;flex:1;">最近 3 筆，列印時自動存入；點擊載入</span>
+      <button class="tbtn tbtn-steel" onclick="closeModal('histModal')">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PDF MODAL ===== -->
+<div class="modal-overlay" id="pdfModal">
+  <div class="modal-box wide">
+    <div class="modal-hdr">
+      <h2>📥 PDF 匯入 — 確認品項</h2>
+      <button class="modal-close" onclick="closeModal('pdfModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="pdf-layout">
+        <div>
+          <div class="pdf-parsed-hdr">PDF 原始文字</div>
+          <div class="pdf-raw" id="pdfRawText"></div>
+        </div>
+        <div>
+          <div class="pdf-parsed-hdr">偵測到的品項（可編輯後再匯入）</div>
+          <table class="pdf-tbl">
+            <thead><tr>
+              <th style="width:36%">Part No.</th>
+              <th style="width:44%">Description</th>
+              <th style="width:14%">Qty</th>
+              <th style="width:6%"></th>
+            </tr></thead>
+            <tbody id="pdfParsedBody"></tbody>
+          </table>
+          <button class="pdf-add-row" onclick="pdfAddRow()">＋ 手動新增列</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span style="font-size:9pt;color:#888;flex:1;">匯入後附加到現有品項下方</span>
+      <button class="tbtn tbtn-steel" onclick="closeModal('pdfModal')">取消</button>
+      <button class="tbtn tbtn-cyan" onclick="confirmPdfImport()">匯入 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div id="main-layout">
+
+  <!-- LEFT PANEL -->
+  <div id="left-panel">
+
+    <!-- DOC INFO -->
+    <div class="lp-sec">
+      <div class="lp-sec-title">Document Info</div>
+      <div class="lp-row">
+        <div class="lp-field">
+          <span class="lp-label">Quotation No.</span>
+          <input class="lp-input" id="fQuotNo" oninput="syncField('fQuotNo','prev_quotNo')">
+        </div>
+        <div class="lp-field">
+          <span class="lp-label">Doc Date</span>
+          <input class="lp-input" id="fDocDate" readonly style="color:#7AAFC8;cursor:default;">
+        </div>
+      </div>
+      <div class="lp-row">
+        <div class="lp-field">
+          <span class="lp-label">Currency</span>
+          <select class="lp-select" id="fCurrency" onchange="syncField('fCurrency','prev_currency')">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="TWD">TWD</option>
+            <option value="JPY">JPY</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+        <div class="lp-field">
+          <span class="lp-label">Payment Term</span>
+          <select class="lp-select" id="fPayment" onchange="syncField('fPayment','prev_payment')">
+            <option value="T/T 30 days after shipment">T/T 30 days after shipment</option>
+            <option value="T/T 60 days after shipment">T/T 60 days after shipment</option>
+            <option value="T/T 100% in advance">T/T 100% in advance</option>
+            <option value="T/T 50% deposit, 50% before shipment">T/T 50% deposit, 50% before shipment</option>
+            <option value="Net 30 days">Net 30 days</option>
+            <option value="Net 60 days">Net 60 days</option>
+            <option value="L/C at sight">L/C at sight</option>
+            <option value="COD">COD</option>
+          </select>
+        </div>
+      </div>
+      <div class="lp-row">
+        <div class="lp-field">
+          <span class="lp-label">Salesman</span>
+          <select class="lp-select" id="fSalesman" onchange="onSalesmanChange()"></select>
+        </div>
+        <div class="lp-field">
+          <span class="lp-label">Shipment Term</span>
+          <select class="lp-select" id="fShipment" onchange="syncField('fShipment','prev_shipment')">
+            <option value="EXW (Ex Works)">EXW (Ex Works)</option>
+            <option value="FOB Taiwan">FOB Taiwan</option>
+            <option value="CIF destination port">CIF destination port</option>
+            <option value="FCA Taiwan">FCA Taiwan</option>
+            <option value="DDP destination">DDP destination</option>
+            <option value="DAP destination">DAP destination</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER -->
+    <div class="lp-sec">
+      <div class="lp-sec-title">Customer Info</div>
+      <div class="lp-field">
+        <span class="lp-label" style="display:flex;justify-content:space-between;align-items:center;">
+          Customer Name
+          <span id="custCodeBadge" style="font-size:8px;background:#3BC9D9;color:#252F38;border-radius:3px;padding:1px 6px;font-weight:700;letter-spacing:.5px;display:none;"></span>
+        </span>
+        <select class="lp-select" id="fCustomer" onchange="onCustomerChange()">
+          <option value="">— 請選擇客戶 —</option>
+        </select>
+      </div>
+      <div class="lp-field">
+        <span class="lp-label">Contact Person</span>
+        <input class="lp-input" id="fContact" oninput="syncField('fContact','prev_contact')">
+      </div>
+      <div class="lp-field">
+        <span class="lp-label">Tel.</span>
+        <input class="lp-input" id="fTel" oninput="syncField('fTel','prev_tel')">
+      </div>
+    </div>
+
+    <!-- LINE ITEMS -->
+    <div class="lp-sec" style="flex:1;">
+      <div class="lp-sec-title">Line Items</div>
+      <div id="itemsEditor"></div>
+      <button class="add-item-btn" onclick="addItem()">＋ 新增品項</button>
+    </div>
+
+    <!-- REMARKS -->
+    <div class="lp-sec">
+      <div class="lp-sec-title">Terms &amp; Conditions</div>
+      <div id="remarksEditor"></div>
+      <button class="add-rem-lp" onclick="addRemark()">＋ 新增條款</button>
+    </div>
+
+  </div><!-- /#left-panel -->
+
+  <!-- RIGHT PANEL — A4 preview -->
+  <div id="right-panel">
+    <div id="preview-host">
+      <div id="preview-scaler">
+
+        <div class="page t-modern" id="page">
+
+          <!-- === A4 HEADER === -->
+          <div class="page-hdr">
+            <div class="page-co-header">
+              <div class="page-co-left">
+                <svg width="62" height="72" viewBox="0 0 167 195" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <g clip-path="url(#achb-clip-h)">
+                    <path d="M43.5757 64.5779H10.5328L0 87.7135H33.5846L43.5757 64.5779Z" fill="#3BC9D9"/>
+                    <path d="M33.5461 87.7134L9.63165 142.415H46.6068L59.6073 111.166H112.853L125.412 142.415H167.002L105.811 0H71.7049L43.5773 64.5778H78.165L86.8922 43.4213L104.046 87.7134H33.5461Z" fill="#3BC9D9"/>
+                    <path d="M30.4147 194.189L29.2511 190.527H20.0424L18.8788 194.189H9.89081L20.0023 168.104H29.5119L39.4027 194.189H30.4147ZM24.717 175.526L21.848 184.729H27.5257L24.717 175.526Z" fill="#3BC9D9"/>
+                    <path d="M78.6649 190.567C77.1001 192.348 73.7095 195 67.8312 195C64.4607 195 61.4714 194.189 58.8833 192.012C54.4696 188.35 54.1285 183.145 54.1285 181.305C54.1285 179.722 54.3292 176.1 56.8771 172.577C60.5084 167.511 65.5641 167.154 67.8914 167.154C73.9101 167.154 77.5013 170.261 78.9659 171.924C79.7483 172.815 80.1295 173.428 80.6913 174.437L73.6894 177.861C73.5691 177.604 73.4286 177.347 73.3283 177.089C72.8669 176.199 71.5628 173.507 68.1923 173.547C66.6475 173.547 65.6845 174.101 65.1629 174.477C62.5347 176.397 62.6551 180.157 62.6551 180.83C62.6551 184.412 63.8187 186.332 65.0826 187.321C66.4068 188.331 67.5905 188.35 68.2325 188.35C71.1215 188.35 72.4656 186.431 72.9873 185.54C73.1678 185.164 73.3283 184.847 73.5891 184.076L80.7514 187.46C79.8085 189.162 79.327 189.835 78.685 190.567H78.6649Z" fill="#3BC9D9"/>
+                    <path d="M114.155 194.189V184.135H106.171V194.189H97.8246V168.104H106.171V177.604H114.155V168.104H122.582V194.189H114.155Z" fill="#3BC9D9"/>
+                    <path d="M163.369 192.15C162.667 192.863 161.864 193.199 161.523 193.338C159.878 194.07 158.413 194.189 156.688 194.189H140.518V168.104H156.166C156.909 168.104 157.671 168.144 158.413 168.263C159.978 168.48 161.864 169.153 162.967 170.281C163.188 170.539 163.65 171.053 164.011 171.845C164.472 172.735 164.693 173.725 164.693 174.734C164.693 175.585 164.432 178.059 162.285 179.722C161.884 180.018 161.463 180.276 160.54 180.691L161.663 181.028C162.486 181.285 163.128 181.72 163.75 182.354C165.355 184.016 165.415 185.896 165.415 186.747C165.415 187.598 165.295 190.329 163.349 192.17L163.369 192.15ZM156.568 184.649C155.825 183.422 154.24 183.462 153.899 183.462H148.844V188.568H154.08C155.023 188.568 155.865 188.39 156.487 187.539C156.889 186.945 156.929 186.351 156.929 186.055C156.929 185.758 156.889 185.204 156.547 184.649H156.568ZM155.885 174.517C155.243 173.527 153.979 173.606 153.679 173.606H148.884V178H153.498C154.401 178 155.404 177.921 155.946 177.03C156.247 176.595 156.247 176.04 156.247 175.823C156.247 175.15 156.066 174.754 155.905 174.517H155.885Z" fill="#3BC9D9"/>
+                  </g>
+                  <defs><clipPath id="achb-clip-h"><rect width="167" height="195" fill="white"/></clipPath></defs>
+                </svg>
+                <div class="page-co-text">
+                  <strong>ACHB Enterprise Co.</strong>
+                  No. 12, Minsheng Rd., Rende, Tainan, Taiwan 717<br>
+                  T: 886-6-266-3737 &nbsp;|&nbsp; F: 886-6-266-6067 &nbsp;|&nbsp; E: po@achb.com.tw
+                </div>
+              </div>
+              <div class="page-co-right">
+                <div class="page-title">QUOTATION</div>
+                <div class="page-quotno">No.: <span id="prev_quotNo"></span></div>
+                <div class="page-printed-date">
+                  Doc Date: <span id="prev_docDate"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hdr-info-grid">
+              <div class="hdr-bill-to">
+                <div class="hdr-sec-label">Bill To</div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Customer:</span>
+                  <span class="hdr-val" id="prev_customer"></span>
+                </div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Contact:</span>
+                  <span class="hdr-val" id="prev_contact"></span>
+                </div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Tel.:</span>
+                  <span class="hdr-val" id="prev_tel"></span>
+                </div>
+              </div>
+              <div class="hdr-doc-info">
+                <div class="hdr-sec-label">Quotation Details</div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Currency:</span>
+                  <span class="hdr-val" id="prev_currency"></span>
+                </div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Payment:</span>
+                  <span class="hdr-val" id="prev_payment"></span>
+                </div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Salesman:</span>
+                  <span class="hdr-val" id="prev_salesman"></span>
+                </div>
+                <div class="hdr-row">
+                  <span class="hdr-lbl">Shipment:</span>
+                  <span class="hdr-val" id="prev_shipment"></span>
+                </div>
+              </div>
+            </div>
+          </div><!-- /.page-hdr -->
+
+          <!-- === ITEMS TABLE === -->
+          <table class="items-tbl">
+            <thead>
+              <tr>
+                <th class="c-no" rowspan="2">No.</th>
+                <th rowspan="2" style="text-align:left;padding-left:8px;">
+                  Part No. / Name of Product<br>
+                  <span style="font-weight:400;font-size:8.5pt;">Specification / Material</span>
+                </th>
+                <th class="c-qty">Qty</th>
+                <th class="c-price">Unit Price</th>
+                <th class="c-amt">Amount</th>
+                <th class="c-lead" rowspan="2">Lead Time</th>
+              </tr>
+            </thead>
+            <tbody id="previewItems"></tbody>
+          </table>
+
+          <!-- === REMARKS === -->
+          <div class="remark-sec">
+            <div class="remark-lbl">Terms &amp; Conditions</div>
+            <ul class="rem-list" id="previewRemarks"></ul>
+          </div>
+
+          <!-- === SIGNATURE === -->
+          <div class="page-sig-spacer"></div>
+          <div class="sig-row">
+            <div class="sig-block">
+              <div class="sig-line">Authorized Signature / Date</div>
+            </div>
+            <div class="sig-block">
+              <div class="sig-line">Customer Acceptance / Date</div>
+            </div>
+          </div>
+
+          <!-- === COMPANY FOOTER === -->
+          <div class="page-company-footer">
+            <div class="footer-logo">
+              <svg width="52" height="62" viewBox="0 0 167 195" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <g clip-path="url(#achb-clip-f)">
+                  <path d="M43.5757 64.5779H10.5328L0 87.7135H33.5846L43.5757 64.5779Z" fill="#3BC9D9"/>
+                  <path d="M33.5461 87.7134L9.63165 142.415H46.6068L59.6073 111.166H112.853L125.412 142.415H167.002L105.811 0H71.7049L43.5773 64.5778H78.165L86.8922 43.4213L104.046 87.7134H33.5461Z" fill="#3BC9D9"/>
+                  <path d="M30.4147 194.189L29.2511 190.527H20.0424L18.8788 194.189H9.89081L20.0023 168.104H29.5119L39.4027 194.189H30.4147ZM24.717 175.526L21.848 184.729H27.5257L24.717 175.526Z" fill="#3BC9D9"/>
+                  <path d="M78.6649 190.567C77.1001 192.348 73.7095 195 67.8312 195C64.4607 195 61.4714 194.189 58.8833 192.012C54.4696 188.35 54.1285 183.145 54.1285 181.305C54.1285 179.722 54.3292 176.1 56.8771 172.577C60.5084 167.511 65.5641 167.154 67.8914 167.154C73.9101 167.154 77.5013 170.261 78.9659 171.924C79.7483 172.815 80.1295 173.428 80.6913 174.437L73.6894 177.861C73.5691 177.604 73.4286 177.347 73.3283 177.089C72.8669 176.199 71.5628 173.507 68.1923 173.547C66.6475 173.547 65.6845 174.101 65.1629 174.477C62.5347 176.397 62.6551 180.157 62.6551 180.83C62.6551 184.412 63.8187 186.332 65.0826 187.321C66.4068 188.331 67.5905 188.35 68.2325 188.35C71.1215 188.35 72.4656 186.431 72.9873 185.54C73.1678 185.164 73.3283 184.847 73.5891 184.076L80.7514 187.46C79.8085 189.162 79.327 189.835 78.685 190.567H78.6649Z" fill="#3BC9D9"/>
+                  <path d="M114.155 194.189V184.135H106.171V194.189H97.8246V168.104H106.171V177.604H114.155V168.104H122.582V194.189H114.155Z" fill="#3BC9D9"/>
+                  <path d="M163.369 192.15C162.667 192.863 161.864 193.199 161.523 193.338C159.878 194.07 158.413 194.189 156.688 194.189H140.518V168.104H156.166C156.909 168.104 157.671 168.144 158.413 168.263C159.978 168.48 161.864 169.153 162.967 170.281C163.188 170.539 163.65 171.053 164.011 171.845C164.472 172.735 164.693 173.725 164.693 174.734C164.693 175.585 164.432 178.059 162.285 179.722C161.884 180.018 161.463 180.276 160.54 180.691L161.663 181.028C162.486 181.285 163.128 181.72 163.75 182.354C165.355 184.016 165.415 185.896 165.415 186.747C165.415 187.598 165.295 190.329 163.349 192.17L163.369 192.15ZM156.568 184.649C155.825 183.422 154.24 183.462 153.899 183.462H148.844V188.568H154.08C155.023 188.568 155.865 188.39 156.487 187.539C156.889 186.945 156.929 186.351 156.929 186.055C156.929 185.758 156.889 185.204 156.547 184.649H156.568ZM155.885 174.517C155.243 173.527 153.979 173.606 153.679 173.606H148.884V178H153.498C154.401 178 155.404 177.921 155.946 177.03C156.247 176.595 156.247 176.04 156.247 175.823C156.247 175.15 156.066 174.754 155.905 174.517H155.885Z" fill="#3BC9D9"/>
+                </g>
+                <defs><clipPath id="achb-clip-f"><rect width="167" height="195" fill="white"/></clipPath></defs>
+              </svg>
+            </div>
+            <div class="footer-co-info">
+              <strong>ACHB Enterprise Co.</strong>
+              No. 12, Minsheng Rd., Rende, Tainan, Taiwan 717
+            </div>
+            <div class="footer-contact-info">
+              T&nbsp;&nbsp;886-6-266-3737<br>
+              F&nbsp;&nbsp;886-6-266-6067<br>
+              E&nbsp;&nbsp;po@achb.com.tw
+            </div>
+          </div>
+
+
+        </div><!-- /.page -->
+      </div><!-- /#preview-scaler -->
+    </div><!-- /#preview-host -->
+  </div><!-- /#right-panel -->
+
+</div><!-- /#main-layout -->
+
+<script>
+// ============================================================
+// PDF.js
+// ============================================================
+if(typeof pdfjsLib!=='undefined'){
+  pdfjsLib.GlobalWorkerOptions.workerSrc=
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+// ============================================================
+// DATA MODEL
+// ============================================================
+var items=[
+  {partNo:'00000799',productName:'PLATE, AMP DETECT BASE SIDE, LEFT REV.C',
+   material:'MATERIAL: ALUMINUM 6061-T6 T6510 or T6511',leadTime:'10-14 WEEKS',
+   qtys:[{q:25,p:44.75},{q:50,p:42.50},{q:75,p:41.95},{q:100,p:41.30}]},
+  {partNo:'010-06730AFF',productName:'ARM, PIVOT REV.C',
+   material:'MATERIAL: ALUMINUM 6061-T6 T6510 or T6511',leadTime:'10-14 WEEKS',
+   qtys:[{q:25,p:5.65},{q:50,p:4.95},{q:75,p:4.55},{q:100,p:4.33}]},
+  {partNo:'010-06945AFF',productName:'PLATE, MIXING DRAWER SLIDE REV.C',
+   material:'MATERIAL: ALUMINUM 6061-T6 T6510 or T6511',leadTime:'10-14 WEEKS',
+   qtys:[{q:25,p:33.80},{q:50,p:31.50},{q:75,p:30.55},{q:100,p:29.80}]}
+];
+var remarks=[
+  'Prices are valid for 30 days from the date of this quotation.',
+  'Delivery date is determined upon receipt of confirmed Purchase Order (P.O.).',
+  'Lead time commences upon receipt of P.O. and any required deposit payment.',
+  'All prices quoted in USD unless otherwise specified.'
+];
+
+var HIST_KEY='achb_history_v3';
+var SEQ_KEY='achb_quot_seq';
+
+var SALESPEOPLE=[
+  {name:'Alex Liu',    id:'1'},
+  {name:'Annie Liang', id:'4'},
+  {name:'Eddie Chou',  id:'3'},
+  {name:'Frankie Tsai',id:'0'},
+  {name:'Sarah Lee',   id:'2'}
+];
+
+// ============================================================
+// CUSTOMER LIST
+// ============================================================
+var CUSTOMERS=[
+  {name:'Abbott Molecular',                   code:'FAB03'},
+  {name:'Abbott POC',                         code:'FAB01'},
+  {name:'ADLINK (Boston Dynamics)',            code:'FAD01'},
+  {name:'ATL (Waters Milford)',                code:'FAT01'},
+  {name:'Boston Dynamics',                    code:'FBD01'},
+  {name:'C&B (Waters Milford)',               code:'FCB01'},
+  {name:'CEI (Waters UK)',                    code:'FCE01'},
+  {name:'Crosman Corporation',                code:'FYT01'},
+  {name:'ELBIT',                              code:'FEB01'},
+  {name:'EVERMAGNET (Waters Milford)',         code:'FMB01'},
+  {name:'Flex (Waters Milford)',              code:'FFT01'},
+  {name:'FLUID METERING',                     code:'FFM01'},
+  {name:'FU YU (Waters Milford)',             code:'FFY01'},
+  {name:'GDI (Waters Milford)',               code:'FGD01'},
+  {name:'GES (Waters Milford)',               code:'FGE01'},
+  {name:'GES (Waters UK)',                    code:'FGE02'},
+  {name:'Horstman',                           code:'FGK01'},
+  {name:'IVEK',                               code:'FIV01'},
+  {name:'Kingstec',                           code:'FKT01'},
+  {name:'Lucility',                           code:'FLS01'},
+  {name:'Pelham P. (Waters Milford)',          code:'FPP01'},
+  {name:'PKI (HOPKINTON,USA)',                code:'FPE04'},
+  {name:'PKI (Singapore & China)',            code:'FPE02'},
+  {name:'Schivo (Waters UK)',                 code:'FSV01'},
+  {name:'SL Corporation (Boston Dynamics)',   code:'FSL01'},
+  {name:'TA Instruments-Waters LLC',          code:'FTA01'},
+  {name:'Thermo Fisher (Dionex)',             code:'FTF02'},
+  {name:'Thermo Fisher (LPD-USA)',            code:'FTF01'},
+  {name:'Thermo Fisher (Suzhou)',             code:'FTF04'},
+  {name:'TRICONTINENT (Waters Milford)',       code:'FTC01'},
+  {name:'Waters Ireland (Waters UK)',          code:'FWT04'},
+  {name:'Waters Singapore (Waters Milford)',   code:'FWT02'},
+  {name:'Waters UK',                          code:'FWT03'},
+  {name:'緯創醫療 (Boston Dynamics)',           code:'DWT03'}
+];
+
+function buildCustomerSelect(){
+  var sel=document.getElementById('fCustomer');
+  CUSTOMERS.forEach(function(c){
+    var o=document.createElement('option');
+    o.value=c.name;
+    o.textContent=c.name+' — '+c.code;
+    sel.appendChild(o);
+  });
+}
+
+function buildSalesmanSelect(){
+  var sel=document.getElementById('fSalesman');
+  SALESPEOPLE.forEach(function(s){
+    var o=document.createElement('option');
+    o.value=s.name;
+    o.textContent=s.name;
+    sel.appendChild(o);
+  });
+}
+
+function onSalesmanChange(){
+  var sel=document.getElementById('fSalesman');
+  var sp=SALESPEOPLE.find(function(s){return s.name===sel.value;});
+  if(!sp)return;
+  var quotNo=genQuotNo(sp.id);
+  document.getElementById('fQuotNo').value=quotNo;
+  document.getElementById('prev_quotNo').textContent=quotNo;
+  syncField('fSalesman','prev_salesman');
+}
+
+function onCustomerChange(){
+  var sel=document.getElementById('fCustomer');
+  var name=sel.value;
+  document.getElementById('prev_customer').textContent=name;
+  var badge=document.getElementById('custCodeBadge');
+  var match=CUSTOMERS.find(function(c){return c.name===name;});
+  if(match){badge.textContent=match.code;badge.style.display='inline';}
+  else{badge.style.display='none';}
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function genQuotNo(salesmanId){
+  var d=new Date(), p=function(n){return String(n).padStart(2,'0');};
+  var compact=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate());
+  var key=SEQ_KEY+'_'+salesmanId;
+  var stored=localStorage.getItem(key);
+  var seq=1;
+  if(stored){var pts=stored.split('|');if(pts[0]===compact)seq=parseInt(pts[1],10)+1;}
+  localStorage.setItem(key,compact+'|'+seq);
+  return compact+salesmanId+String(seq).padStart(2,'0');
+}
+
+(function init(){
+  var d=new Date(), p=function(n){return String(n).padStart(2,'0');};
+  var slash=d.getFullYear()+'/'+p(d.getMonth()+1)+'/'+p(d.getDate());
+
+  // Dates in preview
+  document.getElementById('prev_docDate').textContent=slash;
+  document.getElementById('fDocDate').value=slash;
+
+  // Build salesman dropdown (default: Alex Liu)
+  buildSalesmanSelect();
+  var quotNo=genQuotNo(SALESPEOPLE[0].id);
+  document.getElementById('fQuotNo').value=quotNo;
+  document.getElementById('prev_quotNo').textContent=quotNo;
+
+  // Build customer dropdown
+  buildCustomerSelect();
+
+  // Sync all header fields to preview
+  syncAllFields();
+
+  // Render panels
+  renderLeftItems();
+  renderLeftRemarks();
+  renderPreviewItems();
+  renderPreviewRemarks();
+
+  // PDF input
+  document.getElementById('pdfInput').addEventListener('change',handlePdfFile);
+
+  // Scale on load and resize
+  scalePreview();
+  window.addEventListener('resize',scalePreview);
+})();
+
+// ============================================================
+// FIELD SYNC  (left input → right preview)
+// ============================================================
+function syncField(inputId, prevId){
+  var el=document.getElementById(inputId);
+  var pv=document.getElementById(prevId);
+  if(!el||!pv)return;
+  pv.textContent = el.tagName==='SELECT' ? el.value : el.value;
+}
+
+function syncAllFields(){
+  var map=[
+    ['fQuotNo','prev_quotNo'],['fCurrency','prev_currency'],
+    ['fPayment','prev_payment'],['fSalesman','prev_salesman'],
+    ['fShipment','prev_shipment'],['fCustomer','prev_customer'],
+    ['fContact','prev_contact'],['fTel','prev_tel'],
+  ];
+  map.forEach(function(pair){syncField(pair[0],pair[1]);});
+}
+
+// ============================================================
+// A4 SCALING
+// ============================================================
+function scalePreview(){
+  var rp=document.getElementById('right-panel');
+  var scaler=document.getElementById('preview-scaler');
+  var host=document.getElementById('preview-host');
+  var available=rp.clientWidth-48;
+  var scale=Math.min(1.0, available/795);
+  scaler.style.transform='scale('+scale+')';
+  scaler.style.transformOrigin='top center';
+  // Fix host height to avoid overlap
+  requestAnimationFrame(function(){
+    host.style.height=(scaler.offsetHeight*scale)+'px';
+  });
+}
+
+// ============================================================
+// LEFT PANEL — ITEMS EDITOR
+// ============================================================
+function renderLeftItems(){
+  var container=document.getElementById('itemsEditor');
+  container.innerHTML='';
+  items.forEach(function(item,iIdx){
+    var card=document.createElement('div');
+    card.className='item-card';
+    card.innerHTML=
+      '<div class="item-card-hdr">'+
+        '<span class="item-num-badge">ITEM '+(iIdx+1)+'</span>'+
+        '<div style="display:flex;gap:5px;">'+
+          '<button class="ic-copy-btn" onclick="copyItem('+iIdx+')">⧉ 複製</button>'+
+          '<button class="ic-del-btn" onclick="removeItem('+iIdx+')">✕ 刪除</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="lp-field"><span class="lp-label">Part No.</span>'+
+        '<input class="lp-input" data-i="'+iIdx+'" data-f="partNo" value="'+escAttr(item.partNo)+'">'+
+      '</div>'+
+      '<div class="lp-field"><span class="lp-label">Description</span>'+
+        '<input class="lp-input" data-i="'+iIdx+'" data-f="productName" value="'+escAttr(item.productName)+'">'+
+      '</div>'+
+      '<div class="lp-field"><span class="lp-label">Material / Spec</span>'+
+        '<input class="lp-input" data-i="'+iIdx+'" data-f="material" value="'+escAttr(item.material)+'">'+
+      '</div>'+
+      '<div class="lp-field"><span class="lp-label">Lead Time</span>'+
+        '<input class="lp-input" data-i="'+iIdx+'" data-f="leadTime" value="'+escAttr(item.leadTime)+'">'+
+      '</div>'+
+      '<table class="qty-mini-tbl">'+
+        '<thead><tr><th style="width:44%">Qty</th><th>Unit Price</th><th></th></tr></thead>'+
+        '<tbody id="qty-body-'+iIdx+'"></tbody>'+
+      '</table>'+
+      '<button class="add-qty-btn" onclick="addQtyRow('+iIdx+')">＋ Add Qty Row</button>';
+    container.appendChild(card);
+
+    // Qty rows
+    var qbody=card.querySelector('#qty-body-'+iIdx);
+    item.qtys.forEach(function(qt,qIdx){
+      qbody.appendChild(makeQtyRow(iIdx,qIdx,qt));
+    });
+
+    // Field listeners
+    card.querySelectorAll('.lp-input[data-f]').forEach(function(inp){
+      inp.addEventListener('input',function(){
+        var i=parseInt(inp.dataset.i), f=inp.dataset.f;
+        items[i][f]=inp.value;
+        renderPreviewItems();
+        scalePreview();
+      });
+    });
+  });
+}
+
+function makeQtyRow(iIdx,qIdx,qt){
+  var tr=document.createElement('tr');
+  tr.innerHTML=
+    '<td><input class="lp-input" type="number" min="1" value="'+qt.q+
+      '" data-i="'+iIdx+'" data-qi="'+qIdx+'" data-f="q"></td>'+
+    '<td><input class="lp-input" type="number" min="0" step="0.01" value="'+qt.p+
+      '" data-i="'+iIdx+'" data-qi="'+qIdx+'" data-f="p"></td>'+
+    '<td><button class="qty-row-del" onclick="removeQtyRow('+iIdx+','+qIdx+')" title="刪除此列">×</button></td>';
+  // Listeners
+  tr.querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      var i=parseInt(inp.dataset.i), qi=parseInt(inp.dataset.qi), f=inp.dataset.f;
+      items[i].qtys[qi][f]=parseFloat(inp.value)||0;
+      renderPreviewItems();
+    });
+  });
+  return tr;
+}
+
+// ============================================================
+// LEFT PANEL — REMARKS EDITOR
+// ============================================================
+function renderLeftRemarks(){
+  var container=document.getElementById('remarksEditor');
+  container.innerHTML='';
+  remarks.forEach(function(rem,idx){
+    var row=document.createElement('div');
+    row.className='rem-lp-row';
+    var ta=document.createElement('textarea');
+    ta.className='lp-textarea';
+    ta.rows=2;
+    ta.value=rem;
+    (function(i){
+      ta.addEventListener('input',function(){
+        remarks[i]=ta.value;
+        renderPreviewRemarks();
+      });
+    })(idx);
+    var btn=document.createElement('button');
+    btn.className='rem-del-lp';
+    btn.textContent='✕';
+    (function(i){btn.onclick=function(){removeRemark(i);};})(idx);
+    row.appendChild(ta);
+    row.appendChild(btn);
+    container.appendChild(row);
+  });
+}
+
+// ============================================================
+// PREVIEW — ITEMS
+// ============================================================
+function renderPreviewItems(){
+  var tbody=document.getElementById('previewItems');
+  tbody.innerHTML='';
+  items.forEach(function(item,iIdx){
+    var rows=item.qtys.length;
+    item.qtys.forEach(function(qt,qIdx){
+      var tr=document.createElement('tr');
+      if(qIdx===0){
+        var tdNo=document.createElement('td');
+        tdNo.className='c-no';tdNo.rowSpan=rows;tdNo.textContent=iIdx+1;
+        tr.appendChild(tdNo);
+        var tdProd=document.createElement('td');
+        tdProd.rowSpan=rows;tdProd.style.verticalAlign='middle';
+        tdProd.innerHTML=
+          '<div style="font-weight:700;margin-bottom:1px;">'+esc(item.partNo)+'</div>'+
+          '<div style="margin-bottom:1px;">'+esc(item.productName)+'</div>'+
+          '<div style="color:#666;font-size:9pt;">'+esc(item.material)+'</div>';
+        tr.appendChild(tdProd);
+      }
+      var tdQ=document.createElement('td');tdQ.className='c-qty';tdQ.textContent=qt.q;
+      var tdP=document.createElement('td');tdP.className='c-price';tdP.textContent=fmt(qt.p);
+      var tdA=document.createElement('td');tdA.className='c-amt';tdA.textContent=fmt(qt.q*qt.p);
+      tr.appendChild(tdQ);tr.appendChild(tdP);tr.appendChild(tdA);
+      if(qIdx===0){
+        var tdL=document.createElement('td');tdL.className='c-lead';tdL.rowSpan=rows;
+        tdL.textContent=item.leadTime;
+        tr.appendChild(tdL);
+      }
+      tbody.appendChild(tr);
+    });
+  });
+  scalePreview();
+}
+
+// ============================================================
+// PREVIEW — REMARKS
+// ============================================================
+function renderPreviewRemarks(){
+  var ul=document.getElementById('previewRemarks');
+  ul.innerHTML='';
+  remarks.forEach(function(rem){
+    var li=document.createElement('li');
+    li.className='rem-item';
+    li.textContent=rem;
+    ul.appendChild(li);
+  });
+}
+
+// ============================================================
+// ITEM / REMARK ACTIONS
+// ============================================================
+function addItem(){
+  items.push({partNo:'PART-NO',productName:'Product Description',
+    material:'MATERIAL:',leadTime:'TBD',qtys:[{q:1,p:0}]});
+  renderLeftItems();
+  renderPreviewItems();
+  // Scroll to bottom of left panel
+  var lp=document.getElementById('left-panel');
+  lp.scrollTop=lp.scrollHeight;
+}
+
+function removeItem(i){
+  if(items.length<=1){alert('至少保留一個品項。');return;}
+  if(!confirm('確定刪除此品項？'))return;
+  items.splice(i,1);renderLeftItems();renderPreviewItems();
+}
+
+function copyItem(i){
+  var copy=JSON.parse(JSON.stringify(items[i]));
+  items.splice(i+1,0,copy);
+  renderLeftItems();renderPreviewItems();
+  var cards=document.getElementById('itemsEditor').querySelectorAll('.item-card');
+  if(cards[i+1])cards[i+1].scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function addQtyRow(i){
+  items[i].qtys.push({q:1,p:0});renderLeftItems();renderPreviewItems();
+}
+
+function removeQtyRow(i,qi){
+  if(items[i].qtys.length<=1)return;
+  items[i].qtys.splice(qi,1);renderLeftItems();renderPreviewItems();
+}
+
+function addRemark(){
+  remarks.push('');renderLeftRemarks();renderPreviewRemarks();
+  var rows=document.getElementById('remarksEditor').querySelectorAll('textarea');
+  var last=rows[rows.length-1];if(last)last.focus();
+}
+
+function removeRemark(i){remarks.splice(i,1);renderLeftRemarks();renderPreviewRemarks();}
+
+// ============================================================
+// STATE HELPERS
+// ============================================================
+function gatherState(){
+  return{
+    date:new Date().toISOString(),
+    fields:{
+      quotNo:document.getElementById('fQuotNo').value,
+      docDate:document.getElementById('fDocDate').value,
+      currency:document.getElementById('fCurrency').value,
+      payment:document.getElementById('fPayment').value,
+      salesman:document.getElementById('fSalesman').value,
+      shipment:document.getElementById('fShipment').value,
+      customer:document.getElementById('fCustomer').value,
+      contact:document.getElementById('fContact').value,
+      tel:document.getElementById('fTel').value,
+    },
+    items:JSON.parse(JSON.stringify(items)),
+    remarks:remarks.slice()
+  };
+}
+
+function applyState(s){
+  var f=s.fields||{};
+  var set=function(id,v){if(v!==undefined&&document.getElementById(id))document.getElementById(id).value=v;};
+  set('fQuotNo',f.quotNo);set('fDocDate',f.docDate);set('fCurrency',f.currency);
+  set('fPayment',f.payment);set('fSalesman',f.salesman);set('fShipment',f.shipment);
+  set('fCustomer',f.customer);set('fContact',f.contact);set('fTel',f.tel);
+  onCustomerChange();
+  if(s.items)items=s.items;
+  if(s.remarks)remarks=s.remarks;
+  syncAllFields();
+  renderLeftItems();renderLeftRemarks();
+  renderPreviewItems();renderPreviewRemarks();
+}
+
+// ============================================================
+// DRAFT — 檔案版（存／讀 JSON）
+// ============================================================
+function saveDraft(){
+  var state=gatherState();
+  var quotNo=cleanFn(state.fields.quotNo||'');
+  var customer=cleanFn(state.fields.customer||'');
+  var partNo=state.items&&state.items.length>0?cleanFn(state.items[0].partNo):'';
+  var desc=state.items&&state.items.length>0?state.items[0].productName:'';
+  var filename=buildFilename(quotNo,customer,partNo,desc)+'.json';
+  var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('已下載：'+filename+' ✓');
+}
+function loadDraft(){
+  var input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=function(e){
+    var file=e.target.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var s;
+      try{s=JSON.parse(ev.target.result);}catch(err){showToast('檔案格式錯誤');return;}
+      if(!s.fields||!s.items){showToast('檔案格式不符');return;}
+      if(!confirm('載入「'+file.name+'」將覆蓋目前內容，確定？'))return;
+      applyState(s);showToast('已載入：'+file.name+' ✓');
+    };
+    reader.readAsText(file,'utf-8');
+  };
+  input.click();
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];}}
+
+function pushHistory(){
+  var all=getHistory(),state=gatherState();
+  all=all.filter(function(r){return!r.fields||r.fields.quotNo!==state.fields.quotNo;});
+  all.unshift(state);
+  if(all.length>3)all=all.slice(0,3);
+  localStorage.setItem(HIST_KEY,JSON.stringify(all));
+}
+
+function showHistory(){
+  var all=getHistory();
+  var body=document.getElementById('histBody');
+  if(!all.length){
+    body.innerHTML='<div class="hist-empty">目前沒有紀錄。<br>每次列印時自動存入。</div>';
+  }else{
+    body.innerHTML=all.map(function(r,idx){
+      var d=new Date(r.date);
+      var ds=d.getFullYear()+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getDate().toString().padStart(2,'0');
+      var customer=(r.fields&&r.fields.customer)||'-';
+      var quotNo=(r.fields&&r.fields.quotNo)||'-';
+      var n=(r.items&&r.items.length)||0;
+      return '<div class="hist-row" onclick="loadHistRecord('+idx+')">'+
+        '<span style="color:#555;">'+ds+'</span>'+
+        '<span style="font-weight:600;color:#2C3A47;">'+esc(quotNo)+'</span>'+
+        '<span>'+esc(customer)+'</span>'+
+        '<span style="text-align:center;">'+n+
+          ' <button class="hist-delete" onclick="event.stopPropagation();deleteHistRecord('+idx+')" title="刪除">✕</button>'+
+        '</span></div>';
+    }).join('');
+  }
+  document.getElementById('histModal').classList.add('show');
+}
+
+function loadHistRecord(idx){
+  var all=getHistory();if(!all[idx])return;
+  var r=all[idx],d=new Date(r.date);
+  var ds=d.getFullYear()+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getDate().toString().padStart(2,'0');
+  if(!confirm('載入 '+ds+' / '+(r.fields&&r.fields.quotNo||'')+' 會覆蓋目前內容，確定？'))return;
+  applyState(r);closeModal('histModal');showToast('歷史報價單已載入 ✓');
+}
+
+function deleteHistRecord(idx){
+  var all=getHistory();if(!all[idx])return;
+  if(!confirm('確定刪除此紀錄？'))return;
+  all.splice(idx,1);localStorage.setItem(HIST_KEY,JSON.stringify(all));showHistory();
+}
+
+// ============================================================
+// PRINT
+// ============================================================
+function printWithFilename(){
+  pushHistory();
+  var quotNo=cleanFn(document.getElementById('fQuotNo').value);
+  var customer=cleanFn(document.getElementById('fCustomer').value);
+  var partNo=items.length>0?cleanFn(items[0].partNo):'';
+  var desc=items.length>0?items[0].productName:'';
+  var filename=buildFilename(quotNo,customer,partNo,desc);
+  var prev=document.title;
+  document.title=filename||'ACHB_Quotation';
+  window.addEventListener('afterprint',function restore(){
+    document.title=prev;window.removeEventListener('afterprint',restore);
+  });
+  window.print();
+  showToast('報價單已存入歷史紀錄 ✓');
+}
+
+// ============================================================
+// PDF IMPORT
+// ============================================================
+function handlePdfFile(e){
+  var file=e.target.files[0];e.target.value='';
+  if(!file)return;
+  if(typeof pdfjsLib==='undefined'){alert('PDF.js 尚未載入，請確認網路連線。');return;}
+  showImportOverlay('正在解析 PDF…');
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    pdfjsLib.getDocument({data:ev.target.result}).promise.then(function(pdf){
+      var pp=[];
+      for(var i=1;i<=pdf.numPages;i++){
+        pp.push(pdf.getPage(i).then(function(page){
+          return page.getTextContent().then(function(c){
+            var lines=[],prevY=null;
+            c.items.forEach(function(item){
+              var y=Math.round(item.transform[5]);
+              if(prevY!==null&&Math.abs(y-prevY)>3)lines.push('\n');
+              lines.push(item.str);prevY=y;
+            });
+            return lines.join(' ');
+          });
+        }));
+      }
+      return Promise.all(pp);
+    }).then(function(pages){
+      hideImportOverlay();
+      showPdfModal(pages.join('\n---PAGE BREAK---\n'));
+    }).catch(function(err){
+      hideImportOverlay();
+      alert('PDF 解析失敗：'+err.message);
+    });
+  };
+  reader.onerror=function(){hideImportOverlay();alert('檔案讀取失敗。');};
+  reader.readAsArrayBuffer(file);
+}
+
+function showPdfModal(text){
+  document.getElementById('pdfRawText').textContent=text;
+  renderPdfParsed(parsePdfItems(text));
+  document.getElementById('pdfModal').classList.add('show');
+}
+
+function parsePdfItems(text){
+  var detected=[],seen={};
+  var lines=text.split(/\n+/).map(function(l){return l.trim();}).filter(function(l){return l.length>2;});
+  var partRe=/\b([A-Z0-9]{3,}(?:[-][A-Z0-9]+){0,4})\b/g;
+  var qtyRe=/\b(\d{1,5})\s*(?:PCS|EA|SET|PC|pcs|ea)?\b/;
+  lines.forEach(function(line){
+    if((line.match(/[A-Z0-9]/gi)||[]).length<3)return;
+    if(/^\s*(?:part|no\.|qty|quantity|description|page|date|from|to|tel|fax|http|www)/i.test(line))return;
+    var parts=[];var m;partRe.lastIndex=0;
+    while((m=partRe.exec(line))!==null){if(/\d/.test(m[1])&&m[1].length>=5)parts.push(m[1]);}
+    if(!parts.length)return;
+    var partNo=parts[0];
+    if(seen[partNo])return;seen[partNo]=true;
+    var desc=line.replace(new RegExp(partNo.replace(/[-]/g,'\\-'),'g'),'')
+      .replace(/\b\d{1,5}\s*(?:PCS|EA|SET|PC)?\b/gi,'')
+      .replace(/[^\w\s,.\-\/]/g,' ').replace(/\s{2,}/g,' ').trim();
+    var qm=qtyRe.exec(line);
+    detected.push({partNo:partNo,desc:desc||'',qty:qm?parseInt(qm[1],10):1});
+  });
+  return detected;
+}
+
+function renderPdfParsed(rows){
+  var tbody=document.getElementById('pdfParsedBody');
+  tbody.innerHTML='';
+  if(!rows.length){
+    tbody.innerHTML='<tr><td colspan="4" class="pdf-no-text">未偵測到品項。請手動新增。</td></tr>';return;
+  }
+  rows.forEach(function(r){tbody.appendChild(makePdfRow(r.partNo,r.desc,r.qty));});
+}
+function makePdfRow(partNo,desc,qty){
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td><input value="'+escAttr(partNo)+'"></td><td><input value="'+escAttr(desc)+'"></td>'+
+    '<td><input value="'+qty+'" style="text-align:center;"></td>'+
+    '<td><button class="pdf-row-del" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+  return tr;
+}
+function pdfAddRow(){
+  var tbody=document.getElementById('pdfParsedBody');
+  if(tbody.querySelector('td[colspan]'))tbody.innerHTML='';
+  tbody.appendChild(makePdfRow('','',1));
+}
+function confirmPdfImport(){
+  var rows=document.getElementById('pdfParsedBody').querySelectorAll('tr'),added=0;
+  rows.forEach(function(tr){
+    var inp=tr.querySelectorAll('input');if(!inp.length)return;
+    var pn=(inp[0].value||'').trim(),desc=(inp[1].value||'').trim(),qty=parseInt(inp[2].value,10)||1;
+    if(!pn&&!desc)return;
+    items.push({partNo:pn||'PART-NO',productName:desc||'Product Description',
+      material:'MATERIAL:',leadTime:'TBD',qtys:[{q:qty,p:0}]});added++;
+  });
+  if(!added){showToast('沒有可匯入的品項');return;}
+  renderLeftItems();renderPreviewItems();
+  closeModal('pdfModal');showToast('已匯入 '+added+' 個品項 ✓');
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.addEventListener('click',function(e){
+  if(e.target.classList.contains('modal-overlay'))e.target.classList.remove('show');
+});
+function showImportOverlay(msg){document.getElementById('importMsg').textContent=msg||'處理中…';document.getElementById('importOverlay').classList.add('show');}
+function hideImportOverlay(){document.getElementById('importOverlay').classList.remove('show');}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function cleanFn(s){return String(s||'').trim().replace(/[\s/\\:*?"<>|,.'()]/g,'');}
+function extractRev(desc){var m=String(desc||'').match(/\bREV[.\s]*([A-Z0-9]+)\s*$/i);return m?'REV'+m[1].toUpperCase():'';}
+function buildFilename(quotNo,customer,partNo,desc){
+  var rev=extractRev(desc);
+  return [quotNo,customer,partNo,rev].filter(function(s){return s.length>0;}).join('_')||'ACHB_Quotation';
+}
+function fmt(n){return Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(s){return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+var _tt=null;
+function showToast(msg){
+  var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},2800);
+}
+</script>
+</body>
+</html>
